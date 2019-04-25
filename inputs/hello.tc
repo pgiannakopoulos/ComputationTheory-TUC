@@ -9,7 +9,7 @@ const [] test <- (x : int) : int => {
 let local : real;
 local <- 5 + 2;
 local <- i*i*i;
-}
+};
 
 const start <- (): int => {
 let x: int;

@@ -9,7 +9,6 @@ const prime <- (n: int): bool => {
 		result <- prime(-n);
 	else
 		i <- 3;
-		isPrime <- true;
 		while isPrime and (i < n / 2) loop
 			isPrime <- n % i != 0;
 			i <- i + 2;

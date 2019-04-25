@@ -121,7 +121,7 @@ let_decl_list: let_decl_list ',' let_decl_init { $$ = template("%s, %s", $1, $3 
 ;
 
 let_decl_init: decl_id { $$ = $1; }
-| decl_id ASSIGN expr ';' { $$ = template("%s = %s;", $1, $3); 
+| decl_id ASSIGN expr { $$ = template("%s = %s;", $1, $3); 
 }
 ;
 
@@ -171,6 +171,7 @@ expr:
 | expr '-' expr { $$ = template("%s - %s", $1, $3); }
 | expr '*' expr { $$ = template("%s * %s", $1, $3); }
 | expr '/' expr { $$ = template("%s / %s", $1, $3); }
+| expr '%' expr { $$ = template("%s % %s", $1, $3); }
 | expr TK_OP_BIGGER expr { $$ = template("%s < %s", $1, $3); }
 | expr TK_OP_BIGEQ expr { $$ = template("%s <= %s", $1, $3); }
 | expr TK_OP_NOTEQ expr { $$ = template("%s != %s", $1, $3); }
@@ -234,15 +235,15 @@ return: KW_RETURN expr ';' { $$ = template("return %s;", $2); }
 | %empty { $$="";} 
 
 //IF
-if_command: KW_IF expr KW_THEN command if_rest KW_FI ';' { $$ = template("if %s {\n%s \n%s\n};", $2, $4, $5); }
+if_command: KW_IF expr KW_THEN body if_rest KW_FI ';' { $$ = template("if %s {\n%s \n%s\n};", $2, $4, $5); }
 ;
 
-if_rest: KW_ELSE command { $$ = template("\n}else{ %s;", $2); }
+if_rest: KW_ELSE body { $$ = template("\n}else{ %s;", $2); }
 | %empty { $$="";} 
 ;
 
 //WHILE
-while_command: KW_WHILE expr KW_LOOP command KW_POOL ';' { $$ = template("while %s {\n%s \n};", $2, $4); }
+while_command: KW_WHILE expr KW_LOOP body KW_POOL ';' { $$ = template("while %s {\n%s \n};", $2, $4); }
 ;
 
 %%
