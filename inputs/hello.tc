@@ -1,0 +1,10 @@
+(* My first TeaC program. File: myprog.tc*)
+
+let x <- 0, [] y, z[90] : int;
+let temp : bool;
+let h : real;
+const message <- "sfdf" : string;
+const [] test <- (x : int) : int => {
+}
+const start <- () : int => {
+}
