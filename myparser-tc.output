@@ -9,7 +9,6 @@ Terminals unused in grammar
    KW_WHILE
    KW_LOOP
    KW_POOL
-   KW_RETURN
    KW_NOT
    KW_AND
    KW_OR
@@ -19,105 +18,114 @@ Terminals unused in grammar
    TK_OP_NOTEQ
 
 
-State 97 conflicts: 1 shift/reduce
-
-
 Grammar
 
     0 $accept: program $end
 
-    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}'
-    2        | KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}'
+    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}'
 
-    3 decl_types: var_decl
-    4           | const_decl
+    2 decl_types: var_decl
+    3           | const_decl
 
-    5 global_decl: global_decl decl_types
-    6            | decl_types
+    4 global_decl: global_decl decl_types
+    5            | decl_types
 
-    7 var_decl: KW_LET let_decl_body
+    6 var_decl: KW_LET let_decl_body
 
-    8 let_decl_body: let_decl_list ':' type_spec ';'
+    7 let_decl_body: let_decl_list ':' type_spec ';'
 
-    9 let_decl_list: let_decl_list ',' let_decl_init
-   10              | let_decl_init
+    8 let_decl_list: let_decl_list ',' let_decl_init
+    9              | let_decl_init
 
-   11 let_decl_init: decl_id
-   12              | decl_id ASSIGN expr
+   10 let_decl_init: decl_id
+   11              | decl_id ASSIGN expr
 
-   13 const_decl: KW_CONST const_decl_body
+   12 const_decl: KW_CONST const_decl_body
 
-   14 const_decl_body: const_decl_list ':' type_spec ';'
+   13 const_decl_body: const_decl_list ':' type_spec ';'
 
-   15 const_decl_list: const_decl_list ',' const_decl_init
-   16                | const_decl_init
+   14 const_decl_list: const_decl_list ',' const_decl_init
+   15                | const_decl_init
 
-   17 const_decl_init: decl_id ASSIGN POSINT
-   18                | decl_id ASSIGN REAL
-   19                | decl_id ASSIGN STRING
+   16 const_decl_init: decl_id ASSIGN POSINT
+   17                | decl_id ASSIGN REAL
+   18                | decl_id ASSIGN STRING
 
-   20 decl_id: IDENT
-   21        | '[' ']' IDENT
-   22        | IDENT '[' POSINT ']'
+   19 decl_id: IDENT
+   20        | '[' ']' IDENT
+   21        | IDENT '[' POSINT ']'
 
-   23 type_spec: KW_INT
-   24          | KW_REAL
-   25          | KW_BOOL
-   26          | KW_STRING
+   22 type_spec: KW_INT
+   23          | KW_REAL
+   24          | KW_BOOL
+   25          | KW_STRING
 
-   27 expr: POSINT
-   28     | REAL
-   29     | STRING
-   30     | '(' expr ')'
-   31     | expr '+' expr
-   32     | expr '-' expr
-   33     | expr '*' expr
-   34     | expr '/' expr
+   26 expr: POSINT
+   27     | REAL
+   28     | STRING
+   29     | '(' expr ')'
+   30     | expr '+' expr
+   31     | expr '-' expr
+   32     | expr '*' expr
+   33     | expr '/' expr
 
-   35 func_decl_list: func_decl_list func_decl
-   36               | func_decl
+   34 func_decl_list: func_decl_list func_decl
+   35               | func_decl
 
-   37 func_decl: KW_CONST decl_id ASSIGN '(' par_list ')' ':' type_spec ARROW '{' body '}'
+   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
 
-   38 par_list: par_list ',' param
-   39         | param
+   37 par_decl_list: par_decl_list ',' par_decl
+   38              | par_decl
 
-   40 param: decl_id ':' type_spec
-   41      | %empty
+   39 par_decl: decl_id ':' type_spec
+   40         | %empty
 
-   42 body: body command
-   43     | command
+   41 body: body command
+   42     | command
 
-   44 command: local_decl
-   45        | decl_id ASSIGN expr ';'
+   43 command: decl_id ASSIGN expr ';'
+   44        | func_call
 
-   46 local_decl: local_decl var_decl
-   47           | var_decl
+   45 local_decl: local_decl var_decl
+   46           | var_decl
+
+   47 func_call: decl_id '(' param_list ')' ';'
+
+   48 param_list: param_list ',' param
+   49           | param
+
+   50 param: decl_id
+   51      | %empty
+
+   52 return: KW_RETURN expr ';'
+   53       | KW_RETURN decl_id ';'
+   54       | KW_RETURN ';'
+   55       | %empty
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'(' (40) 1 2 30 37
-')' (41) 1 2 30 37
-'*' (42) 33
-'+' (43) 31
-',' (44) 9 15 38
-'-' (45) 32
-'/' (47) 34
-':' (58) 1 2 8 14 37 40
-';' (59) 8 14 45
-'[' (91) 21 22
-']' (93) 21 22
-'{' (123) 1 2 37
-'}' (125) 1 2 37
+'(' (40) 1 29 36 47
+')' (41) 1 29 36 47
+'*' (42) 32
+'+' (43) 30
+',' (44) 8 14 37 48
+'-' (45) 31
+'/' (47) 33
+':' (58) 1 7 13 36 39
+';' (59) 7 13 43 47 52 53 54
+'[' (91) 20 21
+']' (93) 20 21
+'{' (123) 1 36
+'}' (125) 1 36
 error (256)
-KW_INT (258) 1 2 23
-KW_REAL (259) 24
-KW_STRING (260) 26
+KW_INT (258) 1 22
+KW_REAL (259) 23
+KW_STRING (260) 25
 KW_TRUE (261)
 KW_FALSE (262)
-KW_BOOL (263) 25
+KW_BOOL (263) 24
 KW_IF (264)
 KW_THEN (265)
 KW_ELSE (266)
@@ -125,23 +133,23 @@ KW_FI (267)
 KW_WHILE (268)
 KW_LOOP (269)
 KW_POOL (270)
-KW_CONST (271) 1 2 13 37
-KW_LET (272) 7
-KW_RETURN (273)
+KW_CONST (271) 1 12 36
+KW_LET (272) 6
+KW_RETURN (273) 52 53 54
 KW_NOT (274)
 KW_AND (275)
 KW_OR (276)
-KW_START (277) 1 2
-STRING (278) 19 29
-IDENT (279) 20 21 22
-POSINT (280) 17 22 27
-REAL (281) 18 28
-ASSIGN (282) 1 2 12 17 18 19 37 45
+KW_START (277) 1
+STRING (278) 18 28
+IDENT (279) 19 20 21
+POSINT (280) 16 21 26
+REAL (281) 17 27
+ASSIGN (282) 1 11 16 17 18 36 43
 TK_OP_EQ (283)
 TK_OP_BIGGER (284)
 TK_OP_BIGEQ (285)
 TK_OP_NOTEQ (286)
-ARROW (287) 1 2 37
+ARROW (287) 1 36
 
 
 Nonterminals, with rules where they appear
@@ -149,60 +157,68 @@ Nonterminals, with rules where they appear
 $accept (46)
     on left: 0
 program (47)
-    on left: 1 2, on right: 0
+    on left: 1, on right: 0
 decl_types (48)
-    on left: 3 4, on right: 5 6
+    on left: 2 3, on right: 4 5
 global_decl (49)
-    on left: 5 6, on right: 1 5
+    on left: 4 5, on right: 1 4
 var_decl (50)
-    on left: 7, on right: 3 46 47
+    on left: 6, on right: 2 45 46
 let_decl_body (51)
-    on left: 8, on right: 7
+    on left: 7, on right: 6
 let_decl_list (52)
-    on left: 9 10, on right: 8 9
+    on left: 8 9, on right: 7 8
 let_decl_init (53)
-    on left: 11 12, on right: 9 10
+    on left: 10 11, on right: 8 9
 const_decl (54)
-    on left: 13, on right: 4
+    on left: 12, on right: 3
 const_decl_body (55)
-    on left: 14, on right: 13
+    on left: 13, on right: 12
 const_decl_list (56)
-    on left: 15 16, on right: 14 15
+    on left: 14 15, on right: 13 14
 const_decl_init (57)
-    on left: 17 18 19, on right: 15 16
+    on left: 16 17 18, on right: 14 15
 decl_id (58)
-    on left: 20 21 22, on right: 11 12 17 18 19 37 40 45
+    on left: 19 20 21, on right: 10 11 16 17 18 36 39 43 47 50 53
 type_spec (59)
-    on left: 23 24 25 26, on right: 8 14 37 40
+    on left: 22 23 24 25, on right: 7 13 36 39
 expr (60)
-    on left: 27 28 29 30 31 32 33 34, on right: 12 30 31 32 33 34 45
+    on left: 26 27 28 29 30 31 32 33, on right: 11 29 30 31 32 33 43
+    52
 func_decl_list (61)
-    on left: 35 36, on right: 1 35
+    on left: 34 35, on right: 1 34
 func_decl (62)
-    on left: 37, on right: 35 36
-par_list (63)
-    on left: 38 39, on right: 37 38
-param (64)
-    on left: 40 41, on right: 38 39
+    on left: 36, on right: 34 35
+par_decl_list (63)
+    on left: 37 38, on right: 36 37
+par_decl (64)
+    on left: 39 40, on right: 37 38
 body (65)
-    on left: 42 43, on right: 1 2 37 42
+    on left: 41 42, on right: 1 36 41
 command (66)
-    on left: 44 45, on right: 42 43
+    on left: 43 44, on right: 41 42
 local_decl (67)
-    on left: 46 47, on right: 44 46
+    on left: 45 46, on right: 1 36 45
+func_call (68)
+    on left: 47, on right: 44
+param_list (69)
+    on left: 48 49, on right: 47 48
+param (70)
+    on left: 50 51, on right: 48 49
+return (71)
+    on left: 52 53 54 55, on right: 1 36
 
 
 State 0
 
     0 $accept: . program $end
-    1 program: . global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}'
-    2        | . KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}'
-    3 decl_types: . var_decl
-    4           | . const_decl
-    5 global_decl: . global_decl decl_types
-    6            | . decl_types
-    7 var_decl: . KW_LET let_decl_body
-   13 const_decl: . KW_CONST const_decl_body
+    1 program: . global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}'
+    2 decl_types: . var_decl
+    3           | . const_decl
+    4 global_decl: . global_decl decl_types
+    5            | . decl_types
+    6 var_decl: . KW_LET let_decl_body
+   12 const_decl: . KW_CONST const_decl_body
 
     KW_CONST  shift, and go to state 1
     KW_LET    shift, and go to state 2
@@ -216,1227 +232,1316 @@ State 0
 
 State 1
 
-    2 program: KW_CONST . KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}'
-   13 const_decl: KW_CONST . const_decl_body
-   14 const_decl_body: . const_decl_list ':' type_spec ';'
-   15 const_decl_list: . const_decl_list ',' const_decl_init
-   16                | . const_decl_init
-   17 const_decl_init: . decl_id ASSIGN POSINT
-   18                | . decl_id ASSIGN REAL
-   19                | . decl_id ASSIGN STRING
-   20 decl_id: . IDENT
-   21        | . '[' ']' IDENT
-   22        | . IDENT '[' POSINT ']'
+   12 const_decl: KW_CONST . const_decl_body
+   13 const_decl_body: . const_decl_list ':' type_spec ';'
+   14 const_decl_list: . const_decl_list ',' const_decl_init
+   15                | . const_decl_init
+   16 const_decl_init: . decl_id ASSIGN POSINT
+   17                | . decl_id ASSIGN REAL
+   18                | . decl_id ASSIGN STRING
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
 
-    KW_START  shift, and go to state 8
-    IDENT     shift, and go to state 9
-    '['       shift, and go to state 10
+    IDENT  shift, and go to state 8
+    '['    shift, and go to state 9
 
-    const_decl_body  go to state 11
-    const_decl_list  go to state 12
-    const_decl_init  go to state 13
-    decl_id          go to state 14
+    const_decl_body  go to state 10
+    const_decl_list  go to state 11
+    const_decl_init  go to state 12
+    decl_id          go to state 13
 
 
 State 2
 
-    7 var_decl: KW_LET . let_decl_body
-    8 let_decl_body: . let_decl_list ':' type_spec ';'
-    9 let_decl_list: . let_decl_list ',' let_decl_init
-   10              | . let_decl_init
-   11 let_decl_init: . decl_id
-   12              | . decl_id ASSIGN expr
-   20 decl_id: . IDENT
-   21        | . '[' ']' IDENT
-   22        | . IDENT '[' POSINT ']'
+    6 var_decl: KW_LET . let_decl_body
+    7 let_decl_body: . let_decl_list ':' type_spec ';'
+    8 let_decl_list: . let_decl_list ',' let_decl_init
+    9              | . let_decl_init
+   10 let_decl_init: . decl_id
+   11              | . decl_id ASSIGN expr
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
 
-    IDENT  shift, and go to state 9
-    '['    shift, and go to state 10
+    IDENT  shift, and go to state 8
+    '['    shift, and go to state 9
 
-    let_decl_body  go to state 15
-    let_decl_list  go to state 16
-    let_decl_init  go to state 17
-    decl_id        go to state 18
+    let_decl_body  go to state 14
+    let_decl_list  go to state 15
+    let_decl_init  go to state 16
+    decl_id        go to state 17
 
 
 State 3
 
     0 $accept: program . $end
 
-    $end  shift, and go to state 19
+    $end  shift, and go to state 18
 
 
 State 4
 
-    6 global_decl: decl_types .
+    5 global_decl: decl_types .
 
-    $default  reduce using rule 6 (global_decl)
+    $default  reduce using rule 5 (global_decl)
 
 
 State 5
 
-    1 program: global_decl . func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}'
-    3 decl_types: . var_decl
-    4           | . const_decl
-    5 global_decl: global_decl . decl_types
-    7 var_decl: . KW_LET let_decl_body
-   13 const_decl: . KW_CONST const_decl_body
-   35 func_decl_list: . func_decl_list func_decl
-   36               | . func_decl
-   37 func_decl: . KW_CONST decl_id ASSIGN '(' par_list ')' ':' type_spec ARROW '{' body '}'
+    1 program: global_decl . func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}'
+    2 decl_types: . var_decl
+    3           | . const_decl
+    4 global_decl: global_decl . decl_types
+    6 var_decl: . KW_LET let_decl_body
+   12 const_decl: . KW_CONST const_decl_body
+   34 func_decl_list: . func_decl_list func_decl
+   35               | . func_decl
+   36 func_decl: . KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
 
-    KW_CONST  shift, and go to state 20
+    KW_CONST  shift, and go to state 19
     KW_LET    shift, and go to state 2
 
-    decl_types      go to state 21
+    decl_types      go to state 20
     var_decl        go to state 6
     const_decl      go to state 7
-    func_decl_list  go to state 22
-    func_decl       go to state 23
+    func_decl_list  go to state 21
+    func_decl       go to state 22
 
 
 State 6
 
-    3 decl_types: var_decl .
+    2 decl_types: var_decl .
 
-    $default  reduce using rule 3 (decl_types)
+    $default  reduce using rule 2 (decl_types)
 
 
 State 7
 
-    4 decl_types: const_decl .
+    3 decl_types: const_decl .
 
-    $default  reduce using rule 4 (decl_types)
+    $default  reduce using rule 3 (decl_types)
 
 
 State 8
 
-    2 program: KW_CONST KW_START . ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}'
+   19 decl_id: IDENT .  [ASSIGN, '(', ')', ':', ';', ',']
+   21        | IDENT . '[' POSINT ']'
 
-    ASSIGN  shift, and go to state 24
+    '['  shift, and go to state 23
+
+    $default  reduce using rule 19 (decl_id)
 
 
 State 9
 
-   20 decl_id: IDENT .  [ASSIGN, ':', ',']
-   22        | IDENT . '[' POSINT ']'
+   20 decl_id: '[' . ']' IDENT
 
-    '['  shift, and go to state 25
-
-    $default  reduce using rule 20 (decl_id)
+    ']'  shift, and go to state 24
 
 
 State 10
 
-   21 decl_id: '[' . ']' IDENT
+   12 const_decl: KW_CONST const_decl_body .
 
-    ']'  shift, and go to state 26
+    $default  reduce using rule 12 (const_decl)
 
 
 State 11
 
-   13 const_decl: KW_CONST const_decl_body .
+   13 const_decl_body: const_decl_list . ':' type_spec ';'
+   14 const_decl_list: const_decl_list . ',' const_decl_init
 
-    $default  reduce using rule 13 (const_decl)
+    ':'  shift, and go to state 25
+    ','  shift, and go to state 26
 
 
 State 12
 
-   14 const_decl_body: const_decl_list . ':' type_spec ';'
-   15 const_decl_list: const_decl_list . ',' const_decl_init
+   15 const_decl_list: const_decl_init .
 
-    ':'  shift, and go to state 27
-    ','  shift, and go to state 28
+    $default  reduce using rule 15 (const_decl_list)
 
 
 State 13
 
-   16 const_decl_list: const_decl_init .
+   16 const_decl_init: decl_id . ASSIGN POSINT
+   17                | decl_id . ASSIGN REAL
+   18                | decl_id . ASSIGN STRING
 
-    $default  reduce using rule 16 (const_decl_list)
+    ASSIGN  shift, and go to state 27
 
 
 State 14
 
-   17 const_decl_init: decl_id . ASSIGN POSINT
-   18                | decl_id . ASSIGN REAL
-   19                | decl_id . ASSIGN STRING
+    6 var_decl: KW_LET let_decl_body .
 
-    ASSIGN  shift, and go to state 29
+    $default  reduce using rule 6 (var_decl)
 
 
 State 15
 
-    7 var_decl: KW_LET let_decl_body .
+    7 let_decl_body: let_decl_list . ':' type_spec ';'
+    8 let_decl_list: let_decl_list . ',' let_decl_init
 
-    $default  reduce using rule 7 (var_decl)
+    ':'  shift, and go to state 28
+    ','  shift, and go to state 29
 
 
 State 16
 
-    8 let_decl_body: let_decl_list . ':' type_spec ';'
-    9 let_decl_list: let_decl_list . ',' let_decl_init
+    9 let_decl_list: let_decl_init .
 
-    ':'  shift, and go to state 30
-    ','  shift, and go to state 31
+    $default  reduce using rule 9 (let_decl_list)
 
 
 State 17
 
-   10 let_decl_list: let_decl_init .
+   10 let_decl_init: decl_id .  [':', ',']
+   11              | decl_id . ASSIGN expr
 
-    $default  reduce using rule 10 (let_decl_list)
+    ASSIGN  shift, and go to state 30
+
+    $default  reduce using rule 10 (let_decl_init)
 
 
 State 18
-
-   11 let_decl_init: decl_id .  [':', ',']
-   12              | decl_id . ASSIGN expr
-
-    ASSIGN  shift, and go to state 32
-
-    $default  reduce using rule 11 (let_decl_init)
-
-
-State 19
 
     0 $accept: program $end .
 
     $default  accept
 
 
+State 19
+
+   12 const_decl: KW_CONST . const_decl_body
+   13 const_decl_body: . const_decl_list ':' type_spec ';'
+   14 const_decl_list: . const_decl_list ',' const_decl_init
+   15                | . const_decl_init
+   16 const_decl_init: . decl_id ASSIGN POSINT
+   17                | . decl_id ASSIGN REAL
+   18                | . decl_id ASSIGN STRING
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
+   36 func_decl: KW_CONST . decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+
+    IDENT  shift, and go to state 8
+    '['    shift, and go to state 9
+
+    const_decl_body  go to state 10
+    const_decl_list  go to state 11
+    const_decl_init  go to state 12
+    decl_id          go to state 31
+
+
 State 20
 
-   13 const_decl: KW_CONST . const_decl_body
-   14 const_decl_body: . const_decl_list ':' type_spec ';'
-   15 const_decl_list: . const_decl_list ',' const_decl_init
-   16                | . const_decl_init
-   17 const_decl_init: . decl_id ASSIGN POSINT
-   18                | . decl_id ASSIGN REAL
-   19                | . decl_id ASSIGN STRING
-   20 decl_id: . IDENT
-   21        | . '[' ']' IDENT
-   22        | . IDENT '[' POSINT ']'
-   37 func_decl: KW_CONST . decl_id ASSIGN '(' par_list ')' ':' type_spec ARROW '{' body '}'
+    4 global_decl: global_decl decl_types .
 
-    IDENT  shift, and go to state 9
-    '['    shift, and go to state 10
-
-    const_decl_body  go to state 11
-    const_decl_list  go to state 12
-    const_decl_init  go to state 13
-    decl_id          go to state 33
+    $default  reduce using rule 4 (global_decl)
 
 
 State 21
 
-    5 global_decl: global_decl decl_types .
+    1 program: global_decl func_decl_list . KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}'
+   34 func_decl_list: func_decl_list . func_decl
+   36 func_decl: . KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
 
-    $default  reduce using rule 5 (global_decl)
+    KW_CONST  shift, and go to state 32
+
+    func_decl  go to state 33
 
 
 State 22
 
-    1 program: global_decl func_decl_list . KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}'
-   35 func_decl_list: func_decl_list . func_decl
-   37 func_decl: . KW_CONST decl_id ASSIGN '(' par_list ')' ':' type_spec ARROW '{' body '}'
-
-    KW_CONST  shift, and go to state 34
-
-    func_decl  go to state 35
-
-
-State 23
-
-   36 func_decl_list: func_decl .
-
-    $default  reduce using rule 36 (func_decl_list)
-
-
-State 24
-
-    2 program: KW_CONST KW_START ASSIGN . '(' ')' ':' KW_INT ARROW '{' body '}'
-
-    '('  shift, and go to state 36
-
-
-State 25
-
-   22 decl_id: IDENT '[' . POSINT ']'
-
-    POSINT  shift, and go to state 37
-
-
-State 26
-
-   21 decl_id: '[' ']' . IDENT
-
-    IDENT  shift, and go to state 38
-
-
-State 27
-
-   14 const_decl_body: const_decl_list ':' . type_spec ';'
-   23 type_spec: . KW_INT
-   24          | . KW_REAL
-   25          | . KW_BOOL
-   26          | . KW_STRING
-
-    KW_INT     shift, and go to state 39
-    KW_REAL    shift, and go to state 40
-    KW_STRING  shift, and go to state 41
-    KW_BOOL    shift, and go to state 42
-
-    type_spec  go to state 43
-
-
-State 28
-
-   15 const_decl_list: const_decl_list ',' . const_decl_init
-   17 const_decl_init: . decl_id ASSIGN POSINT
-   18                | . decl_id ASSIGN REAL
-   19                | . decl_id ASSIGN STRING
-   20 decl_id: . IDENT
-   21        | . '[' ']' IDENT
-   22        | . IDENT '[' POSINT ']'
-
-    IDENT  shift, and go to state 9
-    '['    shift, and go to state 10
-
-    const_decl_init  go to state 44
-    decl_id          go to state 14
-
-
-State 29
-
-   17 const_decl_init: decl_id ASSIGN . POSINT
-   18                | decl_id ASSIGN . REAL
-   19                | decl_id ASSIGN . STRING
-
-    STRING  shift, and go to state 45
-    POSINT  shift, and go to state 46
-    REAL    shift, and go to state 47
-
-
-State 30
-
-    8 let_decl_body: let_decl_list ':' . type_spec ';'
-   23 type_spec: . KW_INT
-   24          | . KW_REAL
-   25          | . KW_BOOL
-   26          | . KW_STRING
-
-    KW_INT     shift, and go to state 39
-    KW_REAL    shift, and go to state 40
-    KW_STRING  shift, and go to state 41
-    KW_BOOL    shift, and go to state 42
-
-    type_spec  go to state 48
-
-
-State 31
-
-    9 let_decl_list: let_decl_list ',' . let_decl_init
-   11 let_decl_init: . decl_id
-   12              | . decl_id ASSIGN expr
-   20 decl_id: . IDENT
-   21        | . '[' ']' IDENT
-   22        | . IDENT '[' POSINT ']'
-
-    IDENT  shift, and go to state 9
-    '['    shift, and go to state 10
-
-    let_decl_init  go to state 49
-    decl_id        go to state 18
-
-
-State 32
-
-   12 let_decl_init: decl_id ASSIGN . expr
-   27 expr: . POSINT
-   28     | . REAL
-   29     | . STRING
-   30     | . '(' expr ')'
-   31     | . expr '+' expr
-   32     | . expr '-' expr
-   33     | . expr '*' expr
-   34     | . expr '/' expr
-
-    STRING  shift, and go to state 50
-    POSINT  shift, and go to state 51
-    REAL    shift, and go to state 52
-    '('     shift, and go to state 53
-
-    expr  go to state 54
-
-
-State 33
-
-   17 const_decl_init: decl_id . ASSIGN POSINT
-   18                | decl_id . ASSIGN REAL
-   19                | decl_id . ASSIGN STRING
-   37 func_decl: KW_CONST decl_id . ASSIGN '(' par_list ')' ':' type_spec ARROW '{' body '}'
-
-    ASSIGN  shift, and go to state 55
-
-
-State 34
-
-    1 program: global_decl func_decl_list KW_CONST . KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}'
-   20 decl_id: . IDENT
-   21        | . '[' ']' IDENT
-   22        | . IDENT '[' POSINT ']'
-   37 func_decl: KW_CONST . decl_id ASSIGN '(' par_list ')' ':' type_spec ARROW '{' body '}'
-
-    KW_START  shift, and go to state 56
-    IDENT     shift, and go to state 9
-    '['       shift, and go to state 10
-
-    decl_id  go to state 57
-
-
-State 35
-
-   35 func_decl_list: func_decl_list func_decl .
+   35 func_decl_list: func_decl .
 
     $default  reduce using rule 35 (func_decl_list)
 
 
+State 23
+
+   21 decl_id: IDENT '[' . POSINT ']'
+
+    POSINT  shift, and go to state 34
+
+
+State 24
+
+   20 decl_id: '[' ']' . IDENT
+
+    IDENT  shift, and go to state 35
+
+
+State 25
+
+   13 const_decl_body: const_decl_list ':' . type_spec ';'
+   22 type_spec: . KW_INT
+   23          | . KW_REAL
+   24          | . KW_BOOL
+   25          | . KW_STRING
+
+    KW_INT     shift, and go to state 36
+    KW_REAL    shift, and go to state 37
+    KW_STRING  shift, and go to state 38
+    KW_BOOL    shift, and go to state 39
+
+    type_spec  go to state 40
+
+
+State 26
+
+   14 const_decl_list: const_decl_list ',' . const_decl_init
+   16 const_decl_init: . decl_id ASSIGN POSINT
+   17                | . decl_id ASSIGN REAL
+   18                | . decl_id ASSIGN STRING
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
+
+    IDENT  shift, and go to state 8
+    '['    shift, and go to state 9
+
+    const_decl_init  go to state 41
+    decl_id          go to state 13
+
+
+State 27
+
+   16 const_decl_init: decl_id ASSIGN . POSINT
+   17                | decl_id ASSIGN . REAL
+   18                | decl_id ASSIGN . STRING
+
+    STRING  shift, and go to state 42
+    POSINT  shift, and go to state 43
+    REAL    shift, and go to state 44
+
+
+State 28
+
+    7 let_decl_body: let_decl_list ':' . type_spec ';'
+   22 type_spec: . KW_INT
+   23          | . KW_REAL
+   24          | . KW_BOOL
+   25          | . KW_STRING
+
+    KW_INT     shift, and go to state 36
+    KW_REAL    shift, and go to state 37
+    KW_STRING  shift, and go to state 38
+    KW_BOOL    shift, and go to state 39
+
+    type_spec  go to state 45
+
+
+State 29
+
+    8 let_decl_list: let_decl_list ',' . let_decl_init
+   10 let_decl_init: . decl_id
+   11              | . decl_id ASSIGN expr
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
+
+    IDENT  shift, and go to state 8
+    '['    shift, and go to state 9
+
+    let_decl_init  go to state 46
+    decl_id        go to state 17
+
+
+State 30
+
+   11 let_decl_init: decl_id ASSIGN . expr
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '(' expr ')'
+   30     | . expr '+' expr
+   31     | . expr '-' expr
+   32     | . expr '*' expr
+   33     | . expr '/' expr
+
+    STRING  shift, and go to state 47
+    POSINT  shift, and go to state 48
+    REAL    shift, and go to state 49
+    '('     shift, and go to state 50
+
+    expr  go to state 51
+
+
+State 31
+
+   16 const_decl_init: decl_id . ASSIGN POSINT
+   17                | decl_id . ASSIGN REAL
+   18                | decl_id . ASSIGN STRING
+   36 func_decl: KW_CONST decl_id . ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+
+    ASSIGN  shift, and go to state 52
+
+
+State 32
+
+    1 program: global_decl func_decl_list KW_CONST . KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}'
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
+   36 func_decl: KW_CONST . decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+
+    KW_START  shift, and go to state 53
+    IDENT     shift, and go to state 8
+    '['       shift, and go to state 9
+
+    decl_id  go to state 54
+
+
+State 33
+
+   34 func_decl_list: func_decl_list func_decl .
+
+    $default  reduce using rule 34 (func_decl_list)
+
+
+State 34
+
+   21 decl_id: IDENT '[' POSINT . ']'
+
+    ']'  shift, and go to state 55
+
+
+State 35
+
+   20 decl_id: '[' ']' IDENT .
+
+    $default  reduce using rule 20 (decl_id)
+
+
 State 36
 
-    2 program: KW_CONST KW_START ASSIGN '(' . ')' ':' KW_INT ARROW '{' body '}'
+   22 type_spec: KW_INT .
 
-    ')'  shift, and go to state 58
+    $default  reduce using rule 22 (type_spec)
 
 
 State 37
 
-   22 decl_id: IDENT '[' POSINT . ']'
-
-    ']'  shift, and go to state 59
-
-
-State 38
-
-   21 decl_id: '[' ']' IDENT .
-
-    $default  reduce using rule 21 (decl_id)
-
-
-State 39
-
-   23 type_spec: KW_INT .
+   23 type_spec: KW_REAL .
 
     $default  reduce using rule 23 (type_spec)
 
 
-State 40
+State 38
 
-   24 type_spec: KW_REAL .
-
-    $default  reduce using rule 24 (type_spec)
-
-
-State 41
-
-   26 type_spec: KW_STRING .
-
-    $default  reduce using rule 26 (type_spec)
-
-
-State 42
-
-   25 type_spec: KW_BOOL .
+   25 type_spec: KW_STRING .
 
     $default  reduce using rule 25 (type_spec)
 
 
-State 43
+State 39
 
-   14 const_decl_body: const_decl_list ':' type_spec . ';'
+   24 type_spec: KW_BOOL .
 
-    ';'  shift, and go to state 60
-
-
-State 44
-
-   15 const_decl_list: const_decl_list ',' const_decl_init .
-
-    $default  reduce using rule 15 (const_decl_list)
+    $default  reduce using rule 24 (type_spec)
 
 
-State 45
+State 40
 
-   19 const_decl_init: decl_id ASSIGN STRING .
+   13 const_decl_body: const_decl_list ':' type_spec . ';'
 
-    $default  reduce using rule 19 (const_decl_init)
-
-
-State 46
-
-   17 const_decl_init: decl_id ASSIGN POSINT .
-
-    $default  reduce using rule 17 (const_decl_init)
+    ';'  shift, and go to state 56
 
 
-State 47
+State 41
 
-   18 const_decl_init: decl_id ASSIGN REAL .
+   14 const_decl_list: const_decl_list ',' const_decl_init .
+
+    $default  reduce using rule 14 (const_decl_list)
+
+
+State 42
+
+   18 const_decl_init: decl_id ASSIGN STRING .
 
     $default  reduce using rule 18 (const_decl_init)
 
 
-State 48
+State 43
 
-    8 let_decl_body: let_decl_list ':' type_spec . ';'
+   16 const_decl_init: decl_id ASSIGN POSINT .
 
-    ';'  shift, and go to state 61
-
-
-State 49
-
-    9 let_decl_list: let_decl_list ',' let_decl_init .
-
-    $default  reduce using rule 9 (let_decl_list)
+    $default  reduce using rule 16 (const_decl_init)
 
 
-State 50
+State 44
 
-   29 expr: STRING .
+   17 const_decl_init: decl_id ASSIGN REAL .
 
-    $default  reduce using rule 29 (expr)
-
-
-State 51
-
-   27 expr: POSINT .
-
-    $default  reduce using rule 27 (expr)
+    $default  reduce using rule 17 (const_decl_init)
 
 
-State 52
+State 45
 
-   28 expr: REAL .
+    7 let_decl_body: let_decl_list ':' type_spec . ';'
+
+    ';'  shift, and go to state 57
+
+
+State 46
+
+    8 let_decl_list: let_decl_list ',' let_decl_init .
+
+    $default  reduce using rule 8 (let_decl_list)
+
+
+State 47
+
+   28 expr: STRING .
 
     $default  reduce using rule 28 (expr)
 
 
+State 48
+
+   26 expr: POSINT .
+
+    $default  reduce using rule 26 (expr)
+
+
+State 49
+
+   27 expr: REAL .
+
+    $default  reduce using rule 27 (expr)
+
+
+State 50
+
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '(' expr ')'
+   29     | '(' . expr ')'
+   30     | . expr '+' expr
+   31     | . expr '-' expr
+   32     | . expr '*' expr
+   33     | . expr '/' expr
+
+    STRING  shift, and go to state 47
+    POSINT  shift, and go to state 48
+    REAL    shift, and go to state 49
+    '('     shift, and go to state 50
+
+    expr  go to state 58
+
+
+State 51
+
+   11 let_decl_init: decl_id ASSIGN expr .  [':', ',']
+   30 expr: expr . '+' expr
+   31     | expr . '-' expr
+   32     | expr . '*' expr
+   33     | expr . '/' expr
+
+    '-'  shift, and go to state 59
+    '+'  shift, and go to state 60
+    '*'  shift, and go to state 61
+    '/'  shift, and go to state 62
+
+    $default  reduce using rule 11 (let_decl_init)
+
+
+State 52
+
+   16 const_decl_init: decl_id ASSIGN . POSINT
+   17                | decl_id ASSIGN . REAL
+   18                | decl_id ASSIGN . STRING
+   36 func_decl: KW_CONST decl_id ASSIGN . '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+
+    STRING  shift, and go to state 42
+    POSINT  shift, and go to state 43
+    REAL    shift, and go to state 44
+    '('     shift, and go to state 63
+
+
 State 53
 
-   27 expr: . POSINT
-   28     | . REAL
-   29     | . STRING
-   30     | . '(' expr ')'
-   30     | '(' . expr ')'
-   31     | . expr '+' expr
-   32     | . expr '-' expr
-   33     | . expr '*' expr
-   34     | . expr '/' expr
+    1 program: global_decl func_decl_list KW_CONST KW_START . ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}'
 
-    STRING  shift, and go to state 50
-    POSINT  shift, and go to state 51
-    REAL    shift, and go to state 52
-    '('     shift, and go to state 53
-
-    expr  go to state 62
+    ASSIGN  shift, and go to state 64
 
 
 State 54
 
-   12 let_decl_init: decl_id ASSIGN expr .  [':', ',']
-   31 expr: expr . '+' expr
-   32     | expr . '-' expr
-   33     | expr . '*' expr
-   34     | expr . '/' expr
+   36 func_decl: KW_CONST decl_id . ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
 
-    '-'  shift, and go to state 63
-    '+'  shift, and go to state 64
-    '*'  shift, and go to state 65
-    '/'  shift, and go to state 66
-
-    $default  reduce using rule 12 (let_decl_init)
+    ASSIGN  shift, and go to state 65
 
 
 State 55
 
-   17 const_decl_init: decl_id ASSIGN . POSINT
-   18                | decl_id ASSIGN . REAL
-   19                | decl_id ASSIGN . STRING
-   37 func_decl: KW_CONST decl_id ASSIGN . '(' par_list ')' ':' type_spec ARROW '{' body '}'
+   21 decl_id: IDENT '[' POSINT ']' .
 
-    STRING  shift, and go to state 45
-    POSINT  shift, and go to state 46
-    REAL    shift, and go to state 47
-    '('     shift, and go to state 67
+    $default  reduce using rule 21 (decl_id)
 
 
 State 56
 
-    1 program: global_decl func_decl_list KW_CONST KW_START . ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}'
+   13 const_decl_body: const_decl_list ':' type_spec ';' .
 
-    ASSIGN  shift, and go to state 68
+    $default  reduce using rule 13 (const_decl_body)
 
 
 State 57
 
-   37 func_decl: KW_CONST decl_id . ASSIGN '(' par_list ')' ':' type_spec ARROW '{' body '}'
+    7 let_decl_body: let_decl_list ':' type_spec ';' .
 
-    ASSIGN  shift, and go to state 69
+    $default  reduce using rule 7 (let_decl_body)
 
 
 State 58
 
-    2 program: KW_CONST KW_START ASSIGN '(' ')' . ':' KW_INT ARROW '{' body '}'
+   29 expr: '(' expr . ')'
+   30     | expr . '+' expr
+   31     | expr . '-' expr
+   32     | expr . '*' expr
+   33     | expr . '/' expr
 
-    ':'  shift, and go to state 70
+    '-'  shift, and go to state 59
+    '+'  shift, and go to state 60
+    '*'  shift, and go to state 61
+    '/'  shift, and go to state 62
+    ')'  shift, and go to state 66
 
 
 State 59
 
-   22 decl_id: IDENT '[' POSINT ']' .
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '(' expr ')'
+   30     | . expr '+' expr
+   31     | . expr '-' expr
+   31     | expr '-' . expr
+   32     | . expr '*' expr
+   33     | . expr '/' expr
 
-    $default  reduce using rule 22 (decl_id)
+    STRING  shift, and go to state 47
+    POSINT  shift, and go to state 48
+    REAL    shift, and go to state 49
+    '('     shift, and go to state 50
+
+    expr  go to state 67
 
 
 State 60
 
-   14 const_decl_body: const_decl_list ':' type_spec ';' .
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '(' expr ')'
+   30     | . expr '+' expr
+   30     | expr '+' . expr
+   31     | . expr '-' expr
+   32     | . expr '*' expr
+   33     | . expr '/' expr
 
-    $default  reduce using rule 14 (const_decl_body)
+    STRING  shift, and go to state 47
+    POSINT  shift, and go to state 48
+    REAL    shift, and go to state 49
+    '('     shift, and go to state 50
+
+    expr  go to state 68
 
 
 State 61
 
-    8 let_decl_body: let_decl_list ':' type_spec ';' .
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '(' expr ')'
+   30     | . expr '+' expr
+   31     | . expr '-' expr
+   32     | . expr '*' expr
+   32     | expr '*' . expr
+   33     | . expr '/' expr
 
-    $default  reduce using rule 8 (let_decl_body)
+    STRING  shift, and go to state 47
+    POSINT  shift, and go to state 48
+    REAL    shift, and go to state 49
+    '('     shift, and go to state 50
+
+    expr  go to state 69
 
 
 State 62
 
-   30 expr: '(' expr . ')'
-   31     | expr . '+' expr
-   32     | expr . '-' expr
-   33     | expr . '*' expr
-   34     | expr . '/' expr
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '(' expr ')'
+   30     | . expr '+' expr
+   31     | . expr '-' expr
+   32     | . expr '*' expr
+   33     | . expr '/' expr
+   33     | expr '/' . expr
 
-    '-'  shift, and go to state 63
-    '+'  shift, and go to state 64
-    '*'  shift, and go to state 65
-    '/'  shift, and go to state 66
-    ')'  shift, and go to state 71
+    STRING  shift, and go to state 47
+    POSINT  shift, and go to state 48
+    REAL    shift, and go to state 49
+    '('     shift, and go to state 50
+
+    expr  go to state 70
 
 
 State 63
 
-   27 expr: . POSINT
-   28     | . REAL
-   29     | . STRING
-   30     | . '(' expr ')'
-   31     | . expr '+' expr
-   32     | . expr '-' expr
-   32     | expr '-' . expr
-   33     | . expr '*' expr
-   34     | . expr '/' expr
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
+   36 func_decl: KW_CONST decl_id ASSIGN '(' . par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+   37 par_decl_list: . par_decl_list ',' par_decl
+   38              | . par_decl
+   39 par_decl: . decl_id ':' type_spec
+   40         | . %empty  [')', ',']
 
-    STRING  shift, and go to state 50
-    POSINT  shift, and go to state 51
-    REAL    shift, and go to state 52
-    '('     shift, and go to state 53
+    IDENT  shift, and go to state 8
+    '['    shift, and go to state 9
 
-    expr  go to state 72
+    $default  reduce using rule 40 (par_decl)
+
+    decl_id        go to state 71
+    par_decl_list  go to state 72
+    par_decl       go to state 73
 
 
 State 64
 
-   27 expr: . POSINT
-   28     | . REAL
-   29     | . STRING
-   30     | . '(' expr ')'
-   31     | . expr '+' expr
-   31     | expr '+' . expr
-   32     | . expr '-' expr
-   33     | . expr '*' expr
-   34     | . expr '/' expr
+    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN . '(' ')' ':' KW_INT ARROW '{' local_decl body return '}'
 
-    STRING  shift, and go to state 50
-    POSINT  shift, and go to state 51
-    REAL    shift, and go to state 52
-    '('     shift, and go to state 53
-
-    expr  go to state 73
+    '('  shift, and go to state 74
 
 
 State 65
 
-   27 expr: . POSINT
-   28     | . REAL
-   29     | . STRING
-   30     | . '(' expr ')'
-   31     | . expr '+' expr
-   32     | . expr '-' expr
-   33     | . expr '*' expr
-   33     | expr '*' . expr
-   34     | . expr '/' expr
+   36 func_decl: KW_CONST decl_id ASSIGN . '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
 
-    STRING  shift, and go to state 50
-    POSINT  shift, and go to state 51
-    REAL    shift, and go to state 52
-    '('     shift, and go to state 53
-
-    expr  go to state 74
+    '('  shift, and go to state 63
 
 
 State 66
 
-   27 expr: . POSINT
-   28     | . REAL
-   29     | . STRING
-   30     | . '(' expr ')'
-   31     | . expr '+' expr
-   32     | . expr '-' expr
-   33     | . expr '*' expr
-   34     | . expr '/' expr
-   34     | expr '/' . expr
+   29 expr: '(' expr ')' .
 
-    STRING  shift, and go to state 50
-    POSINT  shift, and go to state 51
-    REAL    shift, and go to state 52
-    '('     shift, and go to state 53
-
-    expr  go to state 75
+    $default  reduce using rule 29 (expr)
 
 
 State 67
 
-   20 decl_id: . IDENT
-   21        | . '[' ']' IDENT
-   22        | . IDENT '[' POSINT ']'
-   37 func_decl: KW_CONST decl_id ASSIGN '(' . par_list ')' ':' type_spec ARROW '{' body '}'
-   38 par_list: . par_list ',' param
-   39         | . param
-   40 param: . decl_id ':' type_spec
-   41      | . %empty  [')', ',']
+   30 expr: expr . '+' expr
+   31     | expr . '-' expr
+   31     | expr '-' expr .  ['-', '+', ')', ':', ';', ',']
+   32     | expr . '*' expr
+   33     | expr . '/' expr
 
-    IDENT  shift, and go to state 9
-    '['    shift, and go to state 10
-
-    $default  reduce using rule 41 (param)
-
-    decl_id   go to state 76
-    par_list  go to state 77
-    param     go to state 78
-
-
-State 68
-
-    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN . '(' ')' ':' KW_INT ARROW '{' body '}'
-
-    '('  shift, and go to state 79
-
-
-State 69
-
-   37 func_decl: KW_CONST decl_id ASSIGN . '(' par_list ')' ':' type_spec ARROW '{' body '}'
-
-    '('  shift, and go to state 67
-
-
-State 70
-
-    2 program: KW_CONST KW_START ASSIGN '(' ')' ':' . KW_INT ARROW '{' body '}'
-
-    KW_INT  shift, and go to state 80
-
-
-State 71
-
-   30 expr: '(' expr ')' .
-
-    $default  reduce using rule 30 (expr)
-
-
-State 72
-
-   31 expr: expr . '+' expr
-   32     | expr . '-' expr
-   32     | expr '-' expr .  ['-', '+', ')', ':', ';', ',']
-   33     | expr . '*' expr
-   34     | expr . '/' expr
-
-    '*'  shift, and go to state 65
-    '/'  shift, and go to state 66
-
-    $default  reduce using rule 32 (expr)
-
-    Conflict between rule 32 and token '-' resolved as reduce (%left '-').
-    Conflict between rule 32 and token '+' resolved as reduce (%left '+').
-    Conflict between rule 32 and token '*' resolved as shift ('-' < '*').
-    Conflict between rule 32 and token '/' resolved as shift ('-' < '/').
-
-
-State 73
-
-   31 expr: expr . '+' expr
-   31     | expr '+' expr .  ['-', '+', ')', ':', ';', ',']
-   32     | expr . '-' expr
-   33     | expr . '*' expr
-   34     | expr . '/' expr
-
-    '*'  shift, and go to state 65
-    '/'  shift, and go to state 66
+    '*'  shift, and go to state 61
+    '/'  shift, and go to state 62
 
     $default  reduce using rule 31 (expr)
 
     Conflict between rule 31 and token '-' resolved as reduce (%left '-').
     Conflict between rule 31 and token '+' resolved as reduce (%left '+').
-    Conflict between rule 31 and token '*' resolved as shift ('+' < '*').
-    Conflict between rule 31 and token '/' resolved as shift ('+' < '/').
+    Conflict between rule 31 and token '*' resolved as shift ('-' < '*').
+    Conflict between rule 31 and token '/' resolved as shift ('-' < '/').
 
 
-State 74
+State 68
 
-   31 expr: expr . '+' expr
-   32     | expr . '-' expr
-   33     | expr . '*' expr
-   33     | expr '*' expr .  ['-', '+', '*', '/', ')', ':', ';', ',']
-   34     | expr . '/' expr
+   30 expr: expr . '+' expr
+   30     | expr '+' expr .  ['-', '+', ')', ':', ';', ',']
+   31     | expr . '-' expr
+   32     | expr . '*' expr
+   33     | expr . '/' expr
+
+    '*'  shift, and go to state 61
+    '/'  shift, and go to state 62
+
+    $default  reduce using rule 30 (expr)
+
+    Conflict between rule 30 and token '-' resolved as reduce (%left '-').
+    Conflict between rule 30 and token '+' resolved as reduce (%left '+').
+    Conflict between rule 30 and token '*' resolved as shift ('+' < '*').
+    Conflict between rule 30 and token '/' resolved as shift ('+' < '/').
+
+
+State 69
+
+   30 expr: expr . '+' expr
+   31     | expr . '-' expr
+   32     | expr . '*' expr
+   32     | expr '*' expr .  ['-', '+', '*', '/', ')', ':', ';', ',']
+   33     | expr . '/' expr
+
+    $default  reduce using rule 32 (expr)
+
+    Conflict between rule 32 and token '-' resolved as reduce ('-' < '*').
+    Conflict between rule 32 and token '+' resolved as reduce ('+' < '*').
+    Conflict between rule 32 and token '*' resolved as reduce (%left '*').
+    Conflict between rule 32 and token '/' resolved as reduce (%left '/').
+
+
+State 70
+
+   30 expr: expr . '+' expr
+   31     | expr . '-' expr
+   32     | expr . '*' expr
+   33     | expr . '/' expr
+   33     | expr '/' expr .  ['-', '+', '*', '/', ')', ':', ';', ',']
 
     $default  reduce using rule 33 (expr)
 
-    Conflict between rule 33 and token '-' resolved as reduce ('-' < '*').
-    Conflict between rule 33 and token '+' resolved as reduce ('+' < '*').
+    Conflict between rule 33 and token '-' resolved as reduce ('-' < '/').
+    Conflict between rule 33 and token '+' resolved as reduce ('+' < '/').
     Conflict between rule 33 and token '*' resolved as reduce (%left '*').
     Conflict between rule 33 and token '/' resolved as reduce (%left '/').
 
 
+State 71
+
+   39 par_decl: decl_id . ':' type_spec
+
+    ':'  shift, and go to state 75
+
+
+State 72
+
+   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list . ')' ':' type_spec ARROW '{' local_decl body return '}'
+   37 par_decl_list: par_decl_list . ',' par_decl
+
+    ')'  shift, and go to state 76
+    ','  shift, and go to state 77
+
+
+State 73
+
+   38 par_decl_list: par_decl .
+
+    $default  reduce using rule 38 (par_decl_list)
+
+
+State 74
+
+    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' . ')' ':' KW_INT ARROW '{' local_decl body return '}'
+
+    ')'  shift, and go to state 78
+
+
 State 75
 
-   31 expr: expr . '+' expr
-   32     | expr . '-' expr
-   33     | expr . '*' expr
-   34     | expr . '/' expr
-   34     | expr '/' expr .  ['-', '+', '*', '/', ')', ':', ';', ',']
+   22 type_spec: . KW_INT
+   23          | . KW_REAL
+   24          | . KW_BOOL
+   25          | . KW_STRING
+   39 par_decl: decl_id ':' . type_spec
 
-    $default  reduce using rule 34 (expr)
+    KW_INT     shift, and go to state 36
+    KW_REAL    shift, and go to state 37
+    KW_STRING  shift, and go to state 38
+    KW_BOOL    shift, and go to state 39
 
-    Conflict between rule 34 and token '-' resolved as reduce ('-' < '/').
-    Conflict between rule 34 and token '+' resolved as reduce ('+' < '/').
-    Conflict between rule 34 and token '*' resolved as reduce (%left '*').
-    Conflict between rule 34 and token '/' resolved as reduce (%left '/').
+    type_spec  go to state 79
 
 
 State 76
 
-   40 param: decl_id . ':' type_spec
+   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' . ':' type_spec ARROW '{' local_decl body return '}'
 
-    ':'  shift, and go to state 81
+    ':'  shift, and go to state 80
 
 
 State 77
 
-   37 func_decl: KW_CONST decl_id ASSIGN '(' par_list . ')' ':' type_spec ARROW '{' body '}'
-   38 par_list: par_list . ',' param
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
+   37 par_decl_list: par_decl_list ',' . par_decl
+   39 par_decl: . decl_id ':' type_spec
+   40         | . %empty  [')', ',']
 
-    ')'  shift, and go to state 82
-    ','  shift, and go to state 83
+    IDENT  shift, and go to state 8
+    '['    shift, and go to state 9
+
+    $default  reduce using rule 40 (par_decl)
+
+    decl_id   go to state 71
+    par_decl  go to state 81
 
 
 State 78
 
-   39 par_list: param .
+    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' . ':' KW_INT ARROW '{' local_decl body return '}'
 
-    $default  reduce using rule 39 (par_list)
+    ':'  shift, and go to state 82
 
 
 State 79
 
-    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' . ')' ':' KW_INT ARROW '{' body '}'
+   39 par_decl: decl_id ':' type_spec .
 
-    ')'  shift, and go to state 84
+    $default  reduce using rule 39 (par_decl)
 
 
 State 80
 
-    2 program: KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT . ARROW '{' body '}'
+   22 type_spec: . KW_INT
+   23          | . KW_REAL
+   24          | . KW_BOOL
+   25          | . KW_STRING
+   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' . type_spec ARROW '{' local_decl body return '}'
 
-    ARROW  shift, and go to state 85
+    KW_INT     shift, and go to state 36
+    KW_REAL    shift, and go to state 37
+    KW_STRING  shift, and go to state 38
+    KW_BOOL    shift, and go to state 39
+
+    type_spec  go to state 83
 
 
 State 81
 
-   23 type_spec: . KW_INT
-   24          | . KW_REAL
-   25          | . KW_BOOL
-   26          | . KW_STRING
-   40 param: decl_id ':' . type_spec
+   37 par_decl_list: par_decl_list ',' par_decl .
 
-    KW_INT     shift, and go to state 39
-    KW_REAL    shift, and go to state 40
-    KW_STRING  shift, and go to state 41
-    KW_BOOL    shift, and go to state 42
-
-    type_spec  go to state 86
+    $default  reduce using rule 37 (par_decl_list)
 
 
 State 82
 
-   37 func_decl: KW_CONST decl_id ASSIGN '(' par_list ')' . ':' type_spec ARROW '{' body '}'
+    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' . KW_INT ARROW '{' local_decl body return '}'
 
-    ':'  shift, and go to state 87
+    KW_INT  shift, and go to state 84
 
 
 State 83
 
-   20 decl_id: . IDENT
-   21        | . '[' ']' IDENT
-   22        | . IDENT '[' POSINT ']'
-   38 par_list: par_list ',' . param
-   40 param: . decl_id ':' type_spec
-   41      | . %empty  [')', ',']
+   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec . ARROW '{' local_decl body return '}'
 
-    IDENT  shift, and go to state 9
-    '['    shift, and go to state 10
-
-    $default  reduce using rule 41 (param)
-
-    decl_id  go to state 76
-    param    go to state 88
+    ARROW  shift, and go to state 85
 
 
 State 84
 
-    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' . ':' KW_INT ARROW '{' body '}'
+    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT . ARROW '{' local_decl body return '}'
 
-    ':'  shift, and go to state 89
+    ARROW  shift, and go to state 86
 
 
 State 85
 
-    2 program: KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW . '{' body '}'
+   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW . '{' local_decl body return '}'
 
-    '{'  shift, and go to state 90
+    '{'  shift, and go to state 87
 
 
 State 86
 
-   40 param: decl_id ':' type_spec .
+    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW . '{' local_decl body return '}'
 
-    $default  reduce using rule 40 (param)
+    '{'  shift, and go to state 88
 
 
 State 87
 
-   23 type_spec: . KW_INT
-   24          | . KW_REAL
-   25          | . KW_BOOL
-   26          | . KW_STRING
-   37 func_decl: KW_CONST decl_id ASSIGN '(' par_list ')' ':' . type_spec ARROW '{' body '}'
+    6 var_decl: . KW_LET let_decl_body
+   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' . local_decl body return '}'
+   45 local_decl: . local_decl var_decl
+   46           | . var_decl
 
-    KW_INT     shift, and go to state 39
-    KW_REAL    shift, and go to state 40
-    KW_STRING  shift, and go to state 41
-    KW_BOOL    shift, and go to state 42
+    KW_LET  shift, and go to state 2
 
-    type_spec  go to state 91
+    var_decl    go to state 89
+    local_decl  go to state 90
 
 
 State 88
 
-   38 par_list: par_list ',' param .
+    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' . local_decl body return '}'
+    6 var_decl: . KW_LET let_decl_body
+   45 local_decl: . local_decl var_decl
+   46           | . var_decl
 
-    $default  reduce using rule 38 (par_list)
+    KW_LET  shift, and go to state 2
+
+    var_decl    go to state 89
+    local_decl  go to state 91
 
 
 State 89
 
-    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' . KW_INT ARROW '{' body '}'
-
-    KW_INT  shift, and go to state 92
-
-
-State 90
-
-    2 program: KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' . body '}'
-    7 var_decl: . KW_LET let_decl_body
-   20 decl_id: . IDENT
-   21        | . '[' ']' IDENT
-   22        | . IDENT '[' POSINT ']'
-   42 body: . body command
-   43     | . command
-   44 command: . local_decl
-   45        | . decl_id ASSIGN expr ';'
-   46 local_decl: . local_decl var_decl
-   47           | . var_decl
-
-    KW_LET  shift, and go to state 2
-    IDENT   shift, and go to state 9
-    '['     shift, and go to state 10
-
-    var_decl    go to state 93
-    decl_id     go to state 94
-    body        go to state 95
-    command     go to state 96
-    local_decl  go to state 97
-
-
-State 91
-
-   37 func_decl: KW_CONST decl_id ASSIGN '(' par_list ')' ':' type_spec . ARROW '{' body '}'
-
-    ARROW  shift, and go to state 98
-
-
-State 92
-
-    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT . ARROW '{' body '}'
-
-    ARROW  shift, and go to state 99
-
-
-State 93
-
-   47 local_decl: var_decl .
-
-    $default  reduce using rule 47 (local_decl)
-
-
-State 94
-
-   45 command: decl_id . ASSIGN expr ';'
-
-    ASSIGN  shift, and go to state 100
-
-
-State 95
-
-    2 program: KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body . '}'
-    7 var_decl: . KW_LET let_decl_body
-   20 decl_id: . IDENT
-   21        | . '[' ']' IDENT
-   22        | . IDENT '[' POSINT ']'
-   42 body: body . command
-   44 command: . local_decl
-   45        | . decl_id ASSIGN expr ';'
-   46 local_decl: . local_decl var_decl
-   47           | . var_decl
-
-    KW_LET  shift, and go to state 2
-    IDENT   shift, and go to state 9
-    '}'     shift, and go to state 101
-    '['     shift, and go to state 10
-
-    var_decl    go to state 93
-    decl_id     go to state 94
-    command     go to state 102
-    local_decl  go to state 97
-
-
-State 96
-
-   43 body: command .
-
-    $default  reduce using rule 43 (body)
-
-
-State 97
-
-    7 var_decl: . KW_LET let_decl_body
-   44 command: local_decl .  [KW_LET, IDENT, '}', '[']
-   46 local_decl: local_decl . var_decl
-
-    KW_LET  shift, and go to state 2
-
-    KW_LET    [reduce using rule 44 (command)]
-    $default  reduce using rule 44 (command)
-
-    var_decl  go to state 103
-
-
-State 98
-
-   37 func_decl: KW_CONST decl_id ASSIGN '(' par_list ')' ':' type_spec ARROW . '{' body '}'
-
-    '{'  shift, and go to state 104
-
-
-State 99
-
-    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW . '{' body '}'
-
-    '{'  shift, and go to state 105
-
-
-State 100
-
-   27 expr: . POSINT
-   28     | . REAL
-   29     | . STRING
-   30     | . '(' expr ')'
-   31     | . expr '+' expr
-   32     | . expr '-' expr
-   33     | . expr '*' expr
-   34     | . expr '/' expr
-   45 command: decl_id ASSIGN . expr ';'
-
-    STRING  shift, and go to state 50
-    POSINT  shift, and go to state 51
-    REAL    shift, and go to state 52
-    '('     shift, and go to state 53
-
-    expr  go to state 106
-
-
-State 101
-
-    2 program: KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}' .
-
-    $default  reduce using rule 2 (program)
-
-
-State 102
-
-   42 body: body command .
-
-    $default  reduce using rule 42 (body)
-
-
-State 103
-
-   46 local_decl: local_decl var_decl .
+   46 local_decl: var_decl .
 
     $default  reduce using rule 46 (local_decl)
 
 
-State 104
+State 90
 
-    7 var_decl: . KW_LET let_decl_body
-   20 decl_id: . IDENT
-   21        | . '[' ']' IDENT
-   22        | . IDENT '[' POSINT ']'
-   37 func_decl: KW_CONST decl_id ASSIGN '(' par_list ')' ':' type_spec ARROW '{' . body '}'
-   42 body: . body command
-   43     | . command
-   44 command: . local_decl
-   45        | . decl_id ASSIGN expr ';'
-   46 local_decl: . local_decl var_decl
-   47           | . var_decl
+    6 var_decl: . KW_LET let_decl_body
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
+   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl . body return '}'
+   41 body: . body command
+   42     | . command
+   43 command: . decl_id ASSIGN expr ';'
+   44        | . func_call
+   45 local_decl: local_decl . var_decl
+   47 func_call: . decl_id '(' param_list ')' ';'
 
     KW_LET  shift, and go to state 2
-    IDENT   shift, and go to state 9
-    '['     shift, and go to state 10
+    IDENT   shift, and go to state 8
+    '['     shift, and go to state 9
 
-    var_decl    go to state 93
-    decl_id     go to state 94
-    body        go to state 107
-    command     go to state 96
-    local_decl  go to state 97
+    var_decl   go to state 92
+    decl_id    go to state 93
+    body       go to state 94
+    command    go to state 95
+    func_call  go to state 96
+
+
+State 91
+
+    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl . body return '}'
+    6 var_decl: . KW_LET let_decl_body
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
+   41 body: . body command
+   42     | . command
+   43 command: . decl_id ASSIGN expr ';'
+   44        | . func_call
+   45 local_decl: local_decl . var_decl
+   47 func_call: . decl_id '(' param_list ')' ';'
+
+    KW_LET  shift, and go to state 2
+    IDENT   shift, and go to state 8
+    '['     shift, and go to state 9
+
+    var_decl   go to state 92
+    decl_id    go to state 93
+    body       go to state 97
+    command    go to state 95
+    func_call  go to state 96
+
+
+State 92
+
+   45 local_decl: local_decl var_decl .
+
+    $default  reduce using rule 45 (local_decl)
+
+
+State 93
+
+   43 command: decl_id . ASSIGN expr ';'
+   47 func_call: decl_id . '(' param_list ')' ';'
+
+    ASSIGN  shift, and go to state 98
+    '('     shift, and go to state 99
+
+
+State 94
+
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
+   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body . return '}'
+   41 body: body . command
+   43 command: . decl_id ASSIGN expr ';'
+   44        | . func_call
+   47 func_call: . decl_id '(' param_list ')' ';'
+   52 return: . KW_RETURN expr ';'
+   53       | . KW_RETURN decl_id ';'
+   54       | . KW_RETURN ';'
+   55       | . %empty  ['}']
+
+    KW_RETURN  shift, and go to state 100
+    IDENT      shift, and go to state 8
+    '['        shift, and go to state 9
+
+    $default  reduce using rule 55 (return)
+
+    decl_id    go to state 93
+    command    go to state 101
+    func_call  go to state 96
+    return     go to state 102
+
+
+State 95
+
+   42 body: command .
+
+    $default  reduce using rule 42 (body)
+
+
+State 96
+
+   44 command: func_call .
+
+    $default  reduce using rule 44 (command)
+
+
+State 97
+
+    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body . return '}'
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
+   41 body: body . command
+   43 command: . decl_id ASSIGN expr ';'
+   44        | . func_call
+   47 func_call: . decl_id '(' param_list ')' ';'
+   52 return: . KW_RETURN expr ';'
+   53       | . KW_RETURN decl_id ';'
+   54       | . KW_RETURN ';'
+   55       | . %empty  ['}']
+
+    KW_RETURN  shift, and go to state 100
+    IDENT      shift, and go to state 8
+    '['        shift, and go to state 9
+
+    $default  reduce using rule 55 (return)
+
+    decl_id    go to state 93
+    command    go to state 101
+    func_call  go to state 96
+    return     go to state 103
+
+
+State 98
+
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '(' expr ')'
+   30     | . expr '+' expr
+   31     | . expr '-' expr
+   32     | . expr '*' expr
+   33     | . expr '/' expr
+   43 command: decl_id ASSIGN . expr ';'
+
+    STRING  shift, and go to state 47
+    POSINT  shift, and go to state 48
+    REAL    shift, and go to state 49
+    '('     shift, and go to state 50
+
+    expr  go to state 104
+
+
+State 99
+
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
+   47 func_call: decl_id '(' . param_list ')' ';'
+   48 param_list: . param_list ',' param
+   49           | . param
+   50 param: . decl_id
+   51      | . %empty  [')', ',']
+
+    IDENT  shift, and go to state 8
+    '['    shift, and go to state 9
+
+    $default  reduce using rule 51 (param)
+
+    decl_id     go to state 105
+    param_list  go to state 106
+    param       go to state 107
+
+
+State 100
+
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '(' expr ')'
+   30     | . expr '+' expr
+   31     | . expr '-' expr
+   32     | . expr '*' expr
+   33     | . expr '/' expr
+   52 return: KW_RETURN . expr ';'
+   53       | KW_RETURN . decl_id ';'
+   54       | KW_RETURN . ';'
+
+    STRING  shift, and go to state 47
+    IDENT   shift, and go to state 8
+    POSINT  shift, and go to state 48
+    REAL    shift, and go to state 49
+    '('     shift, and go to state 50
+    ';'     shift, and go to state 108
+    '['     shift, and go to state 9
+
+    decl_id  go to state 109
+    expr     go to state 110
+
+
+State 101
+
+   41 body: body command .
+
+    $default  reduce using rule 41 (body)
+
+
+State 102
+
+   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return . '}'
+
+    '}'  shift, and go to state 111
+
+
+State 103
+
+    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return . '}'
+
+    '}'  shift, and go to state 112
+
+
+State 104
+
+   30 expr: expr . '+' expr
+   31     | expr . '-' expr
+   32     | expr . '*' expr
+   33     | expr . '/' expr
+   43 command: decl_id ASSIGN expr . ';'
+
+    '-'  shift, and go to state 59
+    '+'  shift, and go to state 60
+    '*'  shift, and go to state 61
+    '/'  shift, and go to state 62
+    ';'  shift, and go to state 113
 
 
 State 105
 
-    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' . body '}'
-    7 var_decl: . KW_LET let_decl_body
-   20 decl_id: . IDENT
-   21        | . '[' ']' IDENT
-   22        | . IDENT '[' POSINT ']'
-   42 body: . body command
-   43     | . command
-   44 command: . local_decl
-   45        | . decl_id ASSIGN expr ';'
-   46 local_decl: . local_decl var_decl
-   47           | . var_decl
+   50 param: decl_id .
 
-    KW_LET  shift, and go to state 2
-    IDENT   shift, and go to state 9
-    '['     shift, and go to state 10
-
-    var_decl    go to state 93
-    decl_id     go to state 94
-    body        go to state 108
-    command     go to state 96
-    local_decl  go to state 97
+    $default  reduce using rule 50 (param)
 
 
 State 106
 
-   31 expr: expr . '+' expr
-   32     | expr . '-' expr
-   33     | expr . '*' expr
-   34     | expr . '/' expr
-   45 command: decl_id ASSIGN expr . ';'
+   47 func_call: decl_id '(' param_list . ')' ';'
+   48 param_list: param_list . ',' param
 
-    '-'  shift, and go to state 63
-    '+'  shift, and go to state 64
-    '*'  shift, and go to state 65
-    '/'  shift, and go to state 66
-    ';'  shift, and go to state 109
+    ')'  shift, and go to state 114
+    ','  shift, and go to state 115
 
 
 State 107
 
-    7 var_decl: . KW_LET let_decl_body
-   20 decl_id: . IDENT
-   21        | . '[' ']' IDENT
-   22        | . IDENT '[' POSINT ']'
-   37 func_decl: KW_CONST decl_id ASSIGN '(' par_list ')' ':' type_spec ARROW '{' body . '}'
-   42 body: body . command
-   44 command: . local_decl
-   45        | . decl_id ASSIGN expr ';'
-   46 local_decl: . local_decl var_decl
-   47           | . var_decl
+   49 param_list: param .
 
-    KW_LET  shift, and go to state 2
-    IDENT   shift, and go to state 9
-    '}'     shift, and go to state 110
-    '['     shift, and go to state 10
-
-    var_decl    go to state 93
-    decl_id     go to state 94
-    command     go to state 102
-    local_decl  go to state 97
+    $default  reduce using rule 49 (param_list)
 
 
 State 108
 
-    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body . '}'
-    7 var_decl: . KW_LET let_decl_body
-   20 decl_id: . IDENT
-   21        | . '[' ']' IDENT
-   22        | . IDENT '[' POSINT ']'
-   42 body: body . command
-   44 command: . local_decl
-   45        | . decl_id ASSIGN expr ';'
-   46 local_decl: . local_decl var_decl
-   47           | . var_decl
+   54 return: KW_RETURN ';' .
 
-    KW_LET  shift, and go to state 2
-    IDENT   shift, and go to state 9
-    '}'     shift, and go to state 111
-    '['     shift, and go to state 10
-
-    var_decl    go to state 93
-    decl_id     go to state 94
-    command     go to state 102
-    local_decl  go to state 97
+    $default  reduce using rule 54 (return)
 
 
 State 109
 
-   45 command: decl_id ASSIGN expr ';' .
+   53 return: KW_RETURN decl_id . ';'
 
-    $default  reduce using rule 45 (command)
+    ';'  shift, and go to state 116
 
 
 State 110
 
-   37 func_decl: KW_CONST decl_id ASSIGN '(' par_list ')' ':' type_spec ARROW '{' body '}' .
+   30 expr: expr . '+' expr
+   31     | expr . '-' expr
+   32     | expr . '*' expr
+   33     | expr . '/' expr
+   52 return: KW_RETURN expr . ';'
 
-    $default  reduce using rule 37 (func_decl)
+    '-'  shift, and go to state 59
+    '+'  shift, and go to state 60
+    '*'  shift, and go to state 61
+    '/'  shift, and go to state 62
+    ';'  shift, and go to state 117
 
 
 State 111
 
-    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}' .
+   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}' .
+
+    $default  reduce using rule 36 (func_decl)
+
+
+State 112
+
+    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}' .
 
     $default  reduce using rule 1 (program)
+
+
+State 113
+
+   43 command: decl_id ASSIGN expr ';' .
+
+    $default  reduce using rule 43 (command)
+
+
+State 114
+
+   47 func_call: decl_id '(' param_list ')' . ';'
+
+    ';'  shift, and go to state 118
+
+
+State 115
+
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
+   48 param_list: param_list ',' . param
+   50 param: . decl_id
+   51      | . %empty  [')', ',']
+
+    IDENT  shift, and go to state 8
+    '['    shift, and go to state 9
+
+    $default  reduce using rule 51 (param)
+
+    decl_id  go to state 105
+    param    go to state 119
+
+
+State 116
+
+   53 return: KW_RETURN decl_id ';' .
+
+    $default  reduce using rule 53 (return)
+
+
+State 117
+
+   52 return: KW_RETURN expr ';' .
+
+    $default  reduce using rule 52 (return)
+
+
+State 118
+
+   47 func_call: decl_id '(' param_list ')' ';' .
+
+    $default  reduce using rule 47 (func_call)
+
+
+State 119
+
+   48 param_list: param_list ',' param .
+
+    $default  reduce using rule 48 (param_list)

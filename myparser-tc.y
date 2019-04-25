@@ -57,14 +57,15 @@
 %type <crepr> const_decl const_decl_body const_decl_list const_decl_init
 %type <crepr> type_spec
 %type <crepr> expr command
-%type <crepr> func_decl par_list param func_decl_list local_decl
+%type <crepr> func_decl func_decl_list par_decl_list par_decl return
+%type <crepr> func_call param param_list local_decl
 
 %left '-' '+'
 %left '*' '/'
 
 %%
 
-program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}' { 
+program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}' { 
 /* We have a successful parse! 
   Check for any errors and generate output. 
 */
@@ -74,21 +75,8 @@ program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT 
     printf("/* program */ \n\n");
     printf("%s\n\n", $1);
     printf("%s\n\n", $2);
-    printf("int main() {\n%s\n} \n", $12);
+    printf("int main() {\n%s%s%s\n} \n", $12,$13,$14);
   }
-}
-|
-KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}' { 
-/* We have a successful parse! 
-  Check for any errors and generate output. 
-*/
-  if(yyerror_count==0) {
-    // include the teaclib.h file
-    puts(c_prologue); 
-    printf("/* program */ \n\n");
-    printf("int main() {\n%s\n} \n", $10);
-  }
-
 }
 ;
 
@@ -117,7 +105,6 @@ let_decl_init: decl_id { $$ = $1; }
 | decl_id ASSIGN expr { $$ = template("%s = %s", $1, $3); 
 }
 ;
-
 
 // CONSTANTS
 const_decl: KW_CONST const_decl_body { $$ = template("const %s", $2); }
@@ -163,33 +150,49 @@ expr:
 //FUNCTIONS
 func_decl_list: func_decl_list func_decl { $$ = template("%s\n%s", $1, $2); }
 | func_decl { $$ = template("%s", $1); }
-
-func_decl: KW_CONST decl_id ASSIGN '(' par_list ')' ':' type_spec ARROW '{' body '}' 
-{ $$ = template("%s %s (%s) {\n %s \n}", $8, $2, $5, $11); }
-
-par_list: par_list ',' param { $$ = template("%s, %s", $1, $3 );}
-| param { $$ = template("%s",$1);}
 ;
 
-param: decl_id ':' type_spec {  $$ = template("%s %s", $3, $1);  }
+func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}' 
+{ $$ = template("%s %s (%s) {\n%s\n%s\n%s\n}", $8, $2, $5, $11, $12, $13); }
+;
+
+par_decl_list: par_decl_list ',' par_decl { $$ = template("%s, %s", $1, $3 );}
+| par_decl { $$ = template("%s",$1);}
+;
+
+par_decl: decl_id ':' type_spec {  $$ = template("%s %s", $3, $1);  }
 | %empty { $$=" ";}
 ;
 
+//BODY
 body: body command { $$ = template("%s\n%s", $1, $2); }
 | command { $$ = template("%s", $1); }
 ;
 
-command: local_decl { $$ = template("%s", $1); }
-| decl_id ASSIGN expr ';' { $$ = template("%s = %s;", $1, $3); }
+command: decl_id ASSIGN expr ';' { $$ = template("%s = %s;", $1, $3); }
+| func_call { $$ = template("%s", $1); }
 ; 
 
 //LOCAL_VARIABLES_hasConflict
-local_decl : local_decl var_decl { $$ = template("%s\n%s", $1, $2); }
+local_decl: local_decl var_decl { $$ = template("%s\n%s", $1, $2); }
 | var_decl { $$ = template("%s", $1); }
 ;
 
+//CALL_FUNCTION
+func_call: decl_id '(' param_list ')' ';' { $$ = template("%s(%s);", $1, $3); }
 
+param_list: param_list ',' param { $$ = template("%s, %s",$1, $3);}
+| param { $$ = template("%s",$1);}
 
+param : decl_id { $$ = template("%s", $1); }
+| %empty { $$="";} 
+;
+
+//RETURN
+return: KW_RETURN expr ';' { $$ = template("return %s;", $2); }
+| KW_RETURN decl_id ';' { $$ = template("return %s;", $2); }
+| KW_RETURN ';' { $$ = template("return;"); }
+| %empty { $$="";} 
 
 %%
 int main () {
