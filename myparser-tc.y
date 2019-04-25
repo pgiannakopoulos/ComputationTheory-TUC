@@ -59,7 +59,7 @@
 %type <crepr> expr command
 %type <crepr> func_decl func_decl_list par_decl_list par_decl return
 %type <crepr> func_call param param_list local_decl
-%type <crepr> if_command while_command
+%type <crepr> if_command if_rest while_command 
 
 %precedence KW_THEN
 %precedence KW_ELSE
@@ -105,7 +105,6 @@ decl_types : var_decl { $$ = $1; }
 | const_decl { $$ = $1;} 
 
 //VARIABLES
-// Declare variables to different lines
 global_decl: global_decl decl_types { $$ = template("%s\n%s", $1, $2); }
 | decl_types 
 ;
@@ -122,7 +121,7 @@ let_decl_list: let_decl_list ',' let_decl_init { $$ = template("%s, %s", $1, $3 
 ;
 
 let_decl_init: decl_id { $$ = $1; }
-| decl_id ASSIGN expr { $$ = template("%s = %s", $1, $3); 
+| decl_id ASSIGN expr ';' { $$ = template("%s = %s;", $1, $3); 
 }
 ;
 
@@ -176,8 +175,8 @@ expr:
 | expr TK_OP_BIGEQ expr { $$ = template("%s <= %s", $1, $3); }
 | expr TK_OP_NOTEQ expr { $$ = template("%s != %s", $1, $3); }
 | expr TK_OP_EQ expr { $$ = template("%s == %s", $1, $3); }
-| KW_TRUE { $$ = template("1"); }
-| KW_FALSE { $$ = template("0"); }
+| KW_TRUE { $$ = template("xxxx"); }
+| KW_FALSE { $$ = template("xxxx"); }
 ;
 
 //FUNCTIONS
@@ -185,13 +184,13 @@ func_decl_list: func_decl_list func_decl { $$ = template("%s\n%s", $1, $2); }
 | func_decl { $$ = template("%s", $1); }
 ;
 
-func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}' 
+func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}' ';'
 { $$ = template("%s %s (%s) {\n%s\n%s\n%s\n}", $8, $2, $5, $11, $12, $13); }
-| KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl return '}' 
+| KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl return '}' ';'
 { $$ = template("%s %s (%s) {\n%s\n%s\n}", $8, $2, $5, $11, $12); }
-| KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' return '}' 
+| KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' return '}' ';'
 { $$ = template("%s %s (%s) {\n%s\n}", $8, $2, $5, $11); }
-| KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' body return '}' 
+| KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' body return '}' ';' 
 { $$ = template("%s %s (%s) {\n%s\n%s\n}", $8, $2, $5, $11, $12); }
 ;
 
@@ -235,12 +234,15 @@ return: KW_RETURN expr ';' { $$ = template("return %s;", $2); }
 | %empty { $$="";} 
 
 //IF
-if_command: KW_IF expr KW_THEN command KW_FI { $$ = template("if %s {\n%s \n};", $2, $4); }
-| KW_IF expr KW_THEN command KW_ELSE command KW_FI { $$ = template("if %s {\n%s \n} \nelse{ \n%s \n};", $2, $4, $4); }
+if_command: KW_IF expr KW_THEN command if_rest KW_FI ';' { $$ = template("if %s {\n%s \n%s\n};", $2, $4, $5); }
+;
+
+if_rest: KW_ELSE command { $$ = template("\n}else{ %s;", $2); }
+| %empty { $$="";} 
 ;
 
 //WHILE
-while_command: KW_WHILE expr KW_LOOP command KW_POOL { $$ = template("while %s {\n%s \n};", $2, $4); }
+while_command: KW_WHILE expr KW_LOOP command KW_POOL ';' { $$ = template("while %s {\n%s \n};", $2, $4); }
 ;
 
 %%

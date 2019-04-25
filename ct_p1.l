@@ -20,7 +20,7 @@ DIGIT   [0-9]
 NUMBER  {DIGIT}{DIGIT}*
 DECIMAL ("."{NUMBER})|({NUMBER}("."{NUMBER}?)?)
 REAL    {DECIMAL}([eE][+-]?{NUMBER})?
-STRING  \"[^\\'\n\"]*\"
+STRING  \"([^\\\"]|\\.)*\"
 
 %x comment 
 
