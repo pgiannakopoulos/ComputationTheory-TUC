@@ -59,6 +59,10 @@
 %type <crepr> expr command
 %type <crepr> func_decl func_decl_list par_decl_list par_decl return
 %type <crepr> func_call param param_list local_decl
+%type <crepr> if_command while_command
+
+%precedence KW_THEN
+%precedence KW_ELSE
 
 %left KW_NOT
 %left '+' '-'
@@ -78,7 +82,20 @@ program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT 
     printf("/* program */ \n\n");
     printf("%s\n\n", $1);
     printf("%s\n\n", $2);
-    printf("int main() {\n%s\n%s\n%s\n\n\n} \n", $12,$13,$14);
+    printf("int main() {\n%s\n%s\n%s\n} \n\n", $12,$13,$14);
+  }
+}
+| global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body return '}' { 
+/* We have a successful parse! 
+  Check for any errors and generate output. 
+*/
+  if(yyerror_count==0) {
+    // include the teaclib.h file
+    puts(c_prologue); 
+    printf("/* program */ \n\n");
+    printf("%s\n\n", $1);
+    printf("%s\n\n", $2);
+    printf("int main() {\n%s\n%s\n} \n\n",$12,$13);
   }
 }
 ;
@@ -143,6 +160,8 @@ expr:
   POSINT
 | REAL
 | STRING
+| decl_id
+| func_call
 | '-' expr  { $$ = template("-%s", $2); }
 | '+' expr  { $$ = template("+%s", $2); }
 | KW_NOT expr { $$ = template("not %s", $2); }
@@ -157,6 +176,8 @@ expr:
 | expr TK_OP_BIGEQ expr { $$ = template("%s <= %s", $1, $3); }
 | expr TK_OP_NOTEQ expr { $$ = template("%s != %s", $1, $3); }
 | expr TK_OP_EQ expr { $$ = template("%s == %s", $1, $3); }
+| KW_TRUE { $$ = template("1"); }
+| KW_FALSE { $$ = template("0"); }
 ;
 
 //FUNCTIONS
@@ -166,6 +187,12 @@ func_decl_list: func_decl_list func_decl { $$ = template("%s\n%s", $1, $2); }
 
 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}' 
 { $$ = template("%s %s (%s) {\n%s\n%s\n%s\n}", $8, $2, $5, $11, $12, $13); }
+| KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl return '}' 
+{ $$ = template("%s %s (%s) {\n%s\n%s\n}", $8, $2, $5, $11, $12); }
+| KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' return '}' 
+{ $$ = template("%s %s (%s) {\n%s\n}", $8, $2, $5, $11); }
+| KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' body return '}' 
+{ $$ = template("%s %s (%s) {\n%s\n%s\n}", $8, $2, $5, $11, $12); }
 ;
 
 par_decl_list: par_decl_list ',' par_decl { $$ = template("%s, %s", $1, $3 );}
@@ -182,7 +209,9 @@ body: body command { $$ = template("%s\n%s", $1, $2); }
 ;
 
 command: decl_id ASSIGN expr ';' { $$ = template("%s = %s;", $1, $3); }
-| func_call { $$ = template("%s", $1); }
+| func_call ';' { $$ = template("%s;", $1); }
+| if_command  { $$ = template("%s", $1); }
+| while_command { $$ = template("%s", $1); }
 ; 
 
 //LOCAL_VARIABLES_hasConflict
@@ -191,20 +220,28 @@ local_decl: local_decl var_decl { $$ = template("%s\n%s", $1, $2); }
 ;
 
 //CALL_FUNCTION
-func_call: decl_id '(' param_list ')' ';' { $$ = template("%s(%s);", $1, $3); }
+func_call: IDENT '(' param_list ')' { $$ = template("%s(%s)", $1, $3); }
 
 param_list: param_list ',' param { $$ = template("%s, %s",$1, $3);}
 | param { $$ = template("%s",$1);}
 
-param : decl_id { $$ = template("%s", $1); }
+param : expr { $$ = template("%s", $1); }
 | %empty { $$="";} 
 ;
 
 //RETURN
 return: KW_RETURN expr ';' { $$ = template("return %s;", $2); }
-| KW_RETURN decl_id ';' { $$ = template("return %s;", $2); }
 | KW_RETURN ';' { $$ = template("return;"); }
 | %empty { $$="";} 
+
+//IF
+if_command: KW_IF expr KW_THEN command KW_FI { $$ = template("if %s {\n%s \n};", $2, $4); }
+| KW_IF expr KW_THEN command KW_ELSE command KW_FI { $$ = template("if %s {\n%s \n} \nelse{ \n%s \n};", $2, $4, $4); }
+;
+
+//WHILE
+while_command: KW_WHILE expr KW_LOOP command KW_POOL { $$ = template("while %s {\n%s \n};", $2, $4); }
+;
 
 %%
 int main () {

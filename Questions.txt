@@ -1,0 +1,8 @@
+Αποριες
+
+1. %empty σε προαιρετικα σημεια και conflict για vars/func δηλωσεις
+
+2. bool εκφρασεις
+
+Conflicts:
+-none

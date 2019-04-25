@@ -10,7 +10,7 @@ const cube <- (i: int): int => {
    
 const add <- (n: int, k: int): int => {
   let j: int;
-  
+
   j <- (N-n) + cube(k);
   writeInt(j);
   return j;
