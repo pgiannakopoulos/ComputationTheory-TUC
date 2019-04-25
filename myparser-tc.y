@@ -51,20 +51,20 @@
 %token ARROW 
 
 %start program
-%type <crepr> declarations
-%type <crepr> var_decl_list body var_decl
+%type <crepr> global_decl decl_types
+%type <crepr> body var_decl
 %type <crepr> let_decl_body let_decl_list let_decl_init decl_id
 %type <crepr> const_decl const_decl_body const_decl_list const_decl_init
 %type <crepr> type_spec
-%type <crepr> expr
-%type <crepr> func_decl par_list param func_decl_list
+%type <crepr> expr command
+%type <crepr> func_decl par_list param func_decl_list local_decl
 
 %left '-' '+'
 %left '*' '/'
 
 %%
 
-program: var_decl_list func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}' { 
+program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}' { 
 /* We have a successful parse! 
   Check for any errors and generate output. 
 */
@@ -93,13 +93,13 @@ KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}' {
 ;
 
 //DECLARATIONS
-declarations : var_decl { $$ = $1; }
+decl_types : var_decl { $$ = $1; }
 | const_decl { $$ = $1;} 
 
 //VARIABLES
 // Declare variables to different lines
-var_decl_list: var_decl_list declarations { $$ = template("%s\n%s", $1, $2); }
-| declarations 
+global_decl: global_decl decl_types { $$ = template("%s\n%s", $1, $2); }
+| decl_types 
 ;
 
 // Declare variables to the same line
@@ -175,8 +175,20 @@ param: decl_id ':' type_spec {  $$ = template("%s %s", $3, $1);  }
 | %empty { $$=" ";}
 ;
 
-body: %empty { $$="";}
+body: body command { $$ = template("%s\n%s", $1, $2); }
+| command { $$ = template("%s", $1); }
 ;
+
+command: local_decl { $$ = template("%s", $1); }
+| decl_id ASSIGN expr ';' { $$ = template("%s = %s;", $1, $3); }
+; 
+
+//LOCAL_VARIABLES_hasConflict
+local_decl : local_decl var_decl { $$ = template("%s\n%s", $1, $2); }
+| var_decl { $$ = template("%s", $1); }
+;
+
+
 
 
 %%

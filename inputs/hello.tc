@@ -4,7 +4,12 @@ let x <- 0, [] y, z[90] : int;
 let temp : bool;
 let h : real;
 const message <- "sfdf" : string;
+
 const [] test <- (x : int) : int => {
+let local : real;
+local <- 5 + 2;
 }
+
 const start <- () : int => {
+local <- 10 + 2;
 }
