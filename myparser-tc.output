@@ -9,13 +9,7 @@ Terminals unused in grammar
    KW_WHILE
    KW_LOOP
    KW_POOL
-   KW_NOT
-   KW_AND
-   KW_OR
-   TK_OP_EQ
-   TK_OP_BIGGER
-   TK_OP_BIGEQ
-   TK_OP_NOTEQ
+   '%'
 
 
 Grammar
@@ -63,62 +57,72 @@ Grammar
    26 expr: POSINT
    27     | REAL
    28     | STRING
-   29     | '(' expr ')'
-   30     | expr '+' expr
-   31     | expr '-' expr
-   32     | expr '*' expr
-   33     | expr '/' expr
+   29     | '-' expr
+   30     | '+' expr
+   31     | KW_NOT expr
+   32     | expr KW_OR expr
+   33     | expr KW_AND expr
+   34     | '(' expr ')'
+   35     | expr '+' expr
+   36     | expr '-' expr
+   37     | expr '*' expr
+   38     | expr '/' expr
+   39     | expr TK_OP_BIGGER expr
+   40     | expr TK_OP_BIGEQ expr
+   41     | expr TK_OP_NOTEQ expr
+   42     | expr TK_OP_EQ expr
 
-   34 func_decl_list: func_decl_list func_decl
-   35               | func_decl
+   43 func_decl_list: func_decl_list func_decl
+   44               | func_decl
 
-   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+   45 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
 
-   37 par_decl_list: par_decl_list ',' par_decl
-   38              | par_decl
+   46 par_decl_list: par_decl_list ',' par_decl
+   47              | par_decl
 
-   39 par_decl: decl_id ':' type_spec
-   40         | %empty
+   48 par_decl: decl_id ':' type_spec
+   49         | %empty
 
-   41 body: body command
-   42     | command
+   50 body: body command
+   51     | command
 
-   43 command: decl_id ASSIGN expr ';'
-   44        | func_call
+   52 command: decl_id ASSIGN expr ';'
+   53        | func_call
 
-   45 local_decl: local_decl var_decl
-   46           | var_decl
+   54 local_decl: local_decl var_decl
+   55           | var_decl
 
-   47 func_call: decl_id '(' param_list ')' ';'
+   56 func_call: decl_id '(' param_list ')' ';'
 
-   48 param_list: param_list ',' param
-   49           | param
+   57 param_list: param_list ',' param
+   58           | param
 
-   50 param: decl_id
-   51      | %empty
+   59 param: decl_id
+   60      | %empty
 
-   52 return: KW_RETURN expr ';'
-   53       | KW_RETURN decl_id ';'
-   54       | KW_RETURN ';'
-   55       | %empty
+   61 return: KW_RETURN expr ';'
+   62       | KW_RETURN decl_id ';'
+   63       | KW_RETURN ';'
+   64       | %empty
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'(' (40) 1 29 36 47
-')' (41) 1 29 36 47
-'*' (42) 32
-'+' (43) 30
-',' (44) 8 14 37 48
-'-' (45) 31
-'/' (47) 33
-':' (58) 1 7 13 36 39
-';' (59) 7 13 43 47 52 53 54
+'%' (37)
+'(' (40) 1 34 45 56
+')' (41) 1 34 45 56
+'*' (42) 37
+'+' (43) 30 35
+',' (44) 8 14 46 57
+'-' (45) 29 36
+'/' (47) 38
+':' (58) 1 7 13 45 48
+';' (59) 7 13 52 56 61 62 63
 '[' (91) 20 21
 ']' (93) 20 21
-'{' (123) 1 36
-'}' (125) 1 36
+'{' (123) 1 45
+'}' (125) 1 45
 error (256)
 KW_INT (258) 1 22
 KW_REAL (259) 23
@@ -133,80 +137,80 @@ KW_FI (267)
 KW_WHILE (268)
 KW_LOOP (269)
 KW_POOL (270)
-KW_CONST (271) 1 12 36
+KW_CONST (271) 1 12 45
 KW_LET (272) 6
-KW_RETURN (273) 52 53 54
-KW_NOT (274)
-KW_AND (275)
-KW_OR (276)
+KW_RETURN (273) 61 62 63
+KW_NOT (274) 31
+KW_AND (275) 33
+KW_OR (276) 32
 KW_START (277) 1
 STRING (278) 18 28
 IDENT (279) 19 20 21
 POSINT (280) 16 21 26
 REAL (281) 17 27
-ASSIGN (282) 1 11 16 17 18 36 43
-TK_OP_EQ (283)
-TK_OP_BIGGER (284)
-TK_OP_BIGEQ (285)
-TK_OP_NOTEQ (286)
-ARROW (287) 1 36
+ASSIGN (282) 1 11 16 17 18 45 52
+TK_OP_EQ (283) 42
+TK_OP_BIGGER (284) 39
+TK_OP_BIGEQ (285) 40
+TK_OP_NOTEQ (286) 41
+ARROW (287) 1 45
 
 
 Nonterminals, with rules where they appear
 
-$accept (46)
+$accept (47)
     on left: 0
-program (47)
+program (48)
     on left: 1, on right: 0
-decl_types (48)
+decl_types (49)
     on left: 2 3, on right: 4 5
-global_decl (49)
+global_decl (50)
     on left: 4 5, on right: 1 4
-var_decl (50)
-    on left: 6, on right: 2 45 46
-let_decl_body (51)
+var_decl (51)
+    on left: 6, on right: 2 54 55
+let_decl_body (52)
     on left: 7, on right: 6
-let_decl_list (52)
+let_decl_list (53)
     on left: 8 9, on right: 7 8
-let_decl_init (53)
+let_decl_init (54)
     on left: 10 11, on right: 8 9
-const_decl (54)
+const_decl (55)
     on left: 12, on right: 3
-const_decl_body (55)
+const_decl_body (56)
     on left: 13, on right: 12
-const_decl_list (56)
+const_decl_list (57)
     on left: 14 15, on right: 13 14
-const_decl_init (57)
+const_decl_init (58)
     on left: 16 17 18, on right: 14 15
-decl_id (58)
-    on left: 19 20 21, on right: 10 11 16 17 18 36 39 43 47 50 53
-type_spec (59)
-    on left: 22 23 24 25, on right: 7 13 36 39
-expr (60)
-    on left: 26 27 28 29 30 31 32 33, on right: 11 29 30 31 32 33 43
-    52
-func_decl_list (61)
-    on left: 34 35, on right: 1 34
-func_decl (62)
-    on left: 36, on right: 34 35
-par_decl_list (63)
-    on left: 37 38, on right: 36 37
-par_decl (64)
-    on left: 39 40, on right: 37 38
-body (65)
-    on left: 41 42, on right: 1 36 41
-command (66)
-    on left: 43 44, on right: 41 42
-local_decl (67)
-    on left: 45 46, on right: 1 36 45
-func_call (68)
-    on left: 47, on right: 44
-param_list (69)
-    on left: 48 49, on right: 47 48
-param (70)
-    on left: 50 51, on right: 48 49
-return (71)
-    on left: 52 53 54 55, on right: 1 36
+decl_id (59)
+    on left: 19 20 21, on right: 10 11 16 17 18 45 48 52 56 59 62
+type_spec (60)
+    on left: 22 23 24 25, on right: 7 13 45 48
+expr (61)
+    on left: 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42, on right:
+    11 29 30 31 32 33 34 35 36 37 38 39 40 41 42 52 61
+func_decl_list (62)
+    on left: 43 44, on right: 1 43
+func_decl (63)
+    on left: 45, on right: 43 44
+par_decl_list (64)
+    on left: 46 47, on right: 45 46
+par_decl (65)
+    on left: 48 49, on right: 46 47
+body (66)
+    on left: 50 51, on right: 1 45 50
+command (67)
+    on left: 52 53, on right: 50 51
+local_decl (68)
+    on left: 54 55, on right: 1 45 54
+func_call (69)
+    on left: 56, on right: 53
+param_list (70)
+    on left: 57 58, on right: 56 57
+param (71)
+    on left: 59 60, on right: 57 58
+return (72)
+    on left: 61 62 63 64, on right: 1 45
 
 
 State 0
@@ -295,9 +299,9 @@ State 5
     4 global_decl: global_decl . decl_types
     6 var_decl: . KW_LET let_decl_body
    12 const_decl: . KW_CONST const_decl_body
-   34 func_decl_list: . func_decl_list func_decl
-   35               | . func_decl
-   36 func_decl: . KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+   43 func_decl_list: . func_decl_list func_decl
+   44               | . func_decl
+   45 func_decl: . KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
 
     KW_CONST  shift, and go to state 19
     KW_LET    shift, and go to state 2
@@ -424,7 +428,7 @@ State 19
    19 decl_id: . IDENT
    20        | . '[' ']' IDENT
    21        | . IDENT '[' POSINT ']'
-   36 func_decl: KW_CONST . decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+   45 func_decl: KW_CONST . decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
 
     IDENT  shift, and go to state 8
     '['    shift, and go to state 9
@@ -445,8 +449,8 @@ State 20
 State 21
 
     1 program: global_decl func_decl_list . KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}'
-   34 func_decl_list: func_decl_list . func_decl
-   36 func_decl: . KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+   43 func_decl_list: func_decl_list . func_decl
+   45 func_decl: . KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
 
     KW_CONST  shift, and go to state 32
 
@@ -455,9 +459,9 @@ State 21
 
 State 22
 
-   35 func_decl_list: func_decl .
+   44 func_decl_list: func_decl .
 
-    $default  reduce using rule 35 (func_decl_list)
+    $default  reduce using rule 44 (func_decl_list)
 
 
 State 23
@@ -556,18 +560,30 @@ State 30
    26 expr: . POSINT
    27     | . REAL
    28     | . STRING
-   29     | . '(' expr ')'
-   30     | . expr '+' expr
-   31     | . expr '-' expr
-   32     | . expr '*' expr
-   33     | . expr '/' expr
+   29     | . '-' expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
 
-    STRING  shift, and go to state 47
-    POSINT  shift, and go to state 48
-    REAL    shift, and go to state 49
-    '('     shift, and go to state 50
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
 
-    expr  go to state 51
+    expr  go to state 54
 
 
 State 31
@@ -575,9 +591,9 @@ State 31
    16 const_decl_init: decl_id . ASSIGN POSINT
    17                | decl_id . ASSIGN REAL
    18                | decl_id . ASSIGN STRING
-   36 func_decl: KW_CONST decl_id . ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+   45 func_decl: KW_CONST decl_id . ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
 
-    ASSIGN  shift, and go to state 52
+    ASSIGN  shift, and go to state 55
 
 
 State 32
@@ -586,27 +602,27 @@ State 32
    19 decl_id: . IDENT
    20        | . '[' ']' IDENT
    21        | . IDENT '[' POSINT ']'
-   36 func_decl: KW_CONST . decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+   45 func_decl: KW_CONST . decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
 
-    KW_START  shift, and go to state 53
+    KW_START  shift, and go to state 56
     IDENT     shift, and go to state 8
     '['       shift, and go to state 9
 
-    decl_id  go to state 54
+    decl_id  go to state 57
 
 
 State 33
 
-   34 func_decl_list: func_decl_list func_decl .
+   43 func_decl_list: func_decl_list func_decl .
 
-    $default  reduce using rule 34 (func_decl_list)
+    $default  reduce using rule 43 (func_decl_list)
 
 
 State 34
 
    21 decl_id: IDENT '[' POSINT . ']'
 
-    ']'  shift, and go to state 55
+    ']'  shift, and go to state 58
 
 
 State 35
@@ -648,7 +664,7 @@ State 40
 
    13 const_decl_body: const_decl_list ':' type_spec . ';'
 
-    ';'  shift, and go to state 56
+    ';'  shift, and go to state 59
 
 
 State 41
@@ -683,7 +699,7 @@ State 45
 
     7 let_decl_body: let_decl_list ':' type_spec . ';'
 
-    ';'  shift, and go to state 57
+    ';'  shift, and go to state 60
 
 
 State 46
@@ -695,668 +711,1419 @@ State 46
 
 State 47
 
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '-' expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   31     | KW_NOT . expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
+
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
+
+    expr  go to state 61
+
+
+State 48
+
    28 expr: STRING .
 
     $default  reduce using rule 28 (expr)
 
 
-State 48
+State 49
 
    26 expr: POSINT .
 
     $default  reduce using rule 26 (expr)
 
 
-State 49
+State 50
 
    27 expr: REAL .
 
     $default  reduce using rule 27 (expr)
 
 
-State 50
+State 51
 
    26 expr: . POSINT
    27     | . REAL
    28     | . STRING
-   29     | . '(' expr ')'
-   29     | '(' . expr ')'
-   30     | . expr '+' expr
-   31     | . expr '-' expr
-   32     | . expr '*' expr
-   33     | . expr '/' expr
+   29     | . '-' expr
+   30     | . '+' expr
+   30     | '+' . expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
 
-    STRING  shift, and go to state 47
-    POSINT  shift, and go to state 48
-    REAL    shift, and go to state 49
-    '('     shift, and go to state 50
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
 
-    expr  go to state 58
-
-
-State 51
-
-   11 let_decl_init: decl_id ASSIGN expr .  [':', ',']
-   30 expr: expr . '+' expr
-   31     | expr . '-' expr
-   32     | expr . '*' expr
-   33     | expr . '/' expr
-
-    '-'  shift, and go to state 59
-    '+'  shift, and go to state 60
-    '*'  shift, and go to state 61
-    '/'  shift, and go to state 62
-
-    $default  reduce using rule 11 (let_decl_init)
+    expr  go to state 62
 
 
 State 52
 
-   16 const_decl_init: decl_id ASSIGN . POSINT
-   17                | decl_id ASSIGN . REAL
-   18                | decl_id ASSIGN . STRING
-   36 func_decl: KW_CONST decl_id ASSIGN . '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '-' expr
+   29     | '-' . expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
 
-    STRING  shift, and go to state 42
-    POSINT  shift, and go to state 43
-    REAL    shift, and go to state 44
-    '('     shift, and go to state 63
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
+
+    expr  go to state 63
 
 
 State 53
 
-    1 program: global_decl func_decl_list KW_CONST KW_START . ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}'
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '-' expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   34     | '(' . expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
 
-    ASSIGN  shift, and go to state 64
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
+
+    expr  go to state 64
 
 
 State 54
 
-   36 func_decl: KW_CONST decl_id . ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+   11 let_decl_init: decl_id ASSIGN expr .  [':', ',']
+   32 expr: expr . KW_OR expr
+   33     | expr . KW_AND expr
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
 
-    ASSIGN  shift, and go to state 65
+    KW_AND        shift, and go to state 65
+    KW_OR         shift, and go to state 66
+    TK_OP_EQ      shift, and go to state 67
+    TK_OP_BIGGER  shift, and go to state 68
+    TK_OP_BIGEQ   shift, and go to state 69
+    TK_OP_NOTEQ   shift, and go to state 70
+    '+'           shift, and go to state 71
+    '-'           shift, and go to state 72
+    '*'           shift, and go to state 73
+    '/'           shift, and go to state 74
+
+    $default  reduce using rule 11 (let_decl_init)
 
 
 State 55
+
+   16 const_decl_init: decl_id ASSIGN . POSINT
+   17                | decl_id ASSIGN . REAL
+   18                | decl_id ASSIGN . STRING
+   45 func_decl: KW_CONST decl_id ASSIGN . '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+
+    STRING  shift, and go to state 42
+    POSINT  shift, and go to state 43
+    REAL    shift, and go to state 44
+    '('     shift, and go to state 75
+
+
+State 56
+
+    1 program: global_decl func_decl_list KW_CONST KW_START . ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}'
+
+    ASSIGN  shift, and go to state 76
+
+
+State 57
+
+   45 func_decl: KW_CONST decl_id . ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+
+    ASSIGN  shift, and go to state 77
+
+
+State 58
 
    21 decl_id: IDENT '[' POSINT ']' .
 
     $default  reduce using rule 21 (decl_id)
 
 
-State 56
+State 59
 
    13 const_decl_body: const_decl_list ':' type_spec ';' .
 
     $default  reduce using rule 13 (const_decl_body)
 
 
-State 57
+State 60
 
     7 let_decl_body: let_decl_list ':' type_spec ';' .
 
     $default  reduce using rule 7 (let_decl_body)
 
 
-State 58
-
-   29 expr: '(' expr . ')'
-   30     | expr . '+' expr
-   31     | expr . '-' expr
-   32     | expr . '*' expr
-   33     | expr . '/' expr
-
-    '-'  shift, and go to state 59
-    '+'  shift, and go to state 60
-    '*'  shift, and go to state 61
-    '/'  shift, and go to state 62
-    ')'  shift, and go to state 66
-
-
-State 59
-
-   26 expr: . POSINT
-   27     | . REAL
-   28     | . STRING
-   29     | . '(' expr ')'
-   30     | . expr '+' expr
-   31     | . expr '-' expr
-   31     | expr '-' . expr
-   32     | . expr '*' expr
-   33     | . expr '/' expr
-
-    STRING  shift, and go to state 47
-    POSINT  shift, and go to state 48
-    REAL    shift, and go to state 49
-    '('     shift, and go to state 50
-
-    expr  go to state 67
-
-
-State 60
-
-   26 expr: . POSINT
-   27     | . REAL
-   28     | . STRING
-   29     | . '(' expr ')'
-   30     | . expr '+' expr
-   30     | expr '+' . expr
-   31     | . expr '-' expr
-   32     | . expr '*' expr
-   33     | . expr '/' expr
-
-    STRING  shift, and go to state 47
-    POSINT  shift, and go to state 48
-    REAL    shift, and go to state 49
-    '('     shift, and go to state 50
-
-    expr  go to state 68
-
-
 State 61
 
-   26 expr: . POSINT
-   27     | . REAL
-   28     | . STRING
-   29     | . '(' expr ')'
-   30     | . expr '+' expr
-   31     | . expr '-' expr
-   32     | . expr '*' expr
-   32     | expr '*' . expr
-   33     | . expr '/' expr
+   31 expr: KW_NOT expr .  [')', ':', ';', ',']
+   32     | expr . KW_OR expr
+   33     | expr . KW_AND expr
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
 
-    STRING  shift, and go to state 47
-    POSINT  shift, and go to state 48
-    REAL    shift, and go to state 49
-    '('     shift, and go to state 50
+    KW_AND        shift, and go to state 65
+    KW_OR         shift, and go to state 66
+    TK_OP_EQ      shift, and go to state 67
+    TK_OP_BIGGER  shift, and go to state 68
+    TK_OP_BIGEQ   shift, and go to state 69
+    TK_OP_NOTEQ   shift, and go to state 70
+    '+'           shift, and go to state 71
+    '-'           shift, and go to state 72
+    '*'           shift, and go to state 73
+    '/'           shift, and go to state 74
 
-    expr  go to state 69
+    $default  reduce using rule 31 (expr)
+
+    Conflict between rule 31 and token KW_AND resolved as shift (KW_NOT < KW_AND).
+    Conflict between rule 31 and token KW_OR resolved as shift (KW_NOT < KW_OR).
+    Conflict between rule 31 and token TK_OP_EQ resolved as shift (KW_NOT < TK_OP_EQ).
+    Conflict between rule 31 and token TK_OP_BIGGER resolved as shift (KW_NOT < TK_OP_BIGGER).
+    Conflict between rule 31 and token TK_OP_BIGEQ resolved as shift (KW_NOT < TK_OP_BIGEQ).
+    Conflict between rule 31 and token TK_OP_NOTEQ resolved as shift (KW_NOT < TK_OP_NOTEQ).
+    Conflict between rule 31 and token '+' resolved as shift (KW_NOT < '+').
+    Conflict between rule 31 and token '-' resolved as shift (KW_NOT < '-').
+    Conflict between rule 31 and token '*' resolved as shift (KW_NOT < '*').
+    Conflict between rule 31 and token '/' resolved as shift (KW_NOT < '/').
 
 
 State 62
 
-   26 expr: . POSINT
-   27     | . REAL
-   28     | . STRING
-   29     | . '(' expr ')'
-   30     | . expr '+' expr
-   31     | . expr '-' expr
-   32     | . expr '*' expr
-   33     | . expr '/' expr
-   33     | expr '/' . expr
+   30 expr: '+' expr .  ['+', '-', ')', ':', ';', ',']
+   32     | expr . KW_OR expr
+   33     | expr . KW_AND expr
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
 
-    STRING  shift, and go to state 47
-    POSINT  shift, and go to state 48
-    REAL    shift, and go to state 49
-    '('     shift, and go to state 50
-
-    expr  go to state 70
-
-
-State 63
-
-   19 decl_id: . IDENT
-   20        | . '[' ']' IDENT
-   21        | . IDENT '[' POSINT ']'
-   36 func_decl: KW_CONST decl_id ASSIGN '(' . par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
-   37 par_decl_list: . par_decl_list ',' par_decl
-   38              | . par_decl
-   39 par_decl: . decl_id ':' type_spec
-   40         | . %empty  [')', ',']
-
-    IDENT  shift, and go to state 8
-    '['    shift, and go to state 9
-
-    $default  reduce using rule 40 (par_decl)
-
-    decl_id        go to state 71
-    par_decl_list  go to state 72
-    par_decl       go to state 73
-
-
-State 64
-
-    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN . '(' ')' ':' KW_INT ARROW '{' local_decl body return '}'
-
-    '('  shift, and go to state 74
-
-
-State 65
-
-   36 func_decl: KW_CONST decl_id ASSIGN . '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
-
-    '('  shift, and go to state 63
-
-
-State 66
-
-   29 expr: '(' expr ')' .
-
-    $default  reduce using rule 29 (expr)
-
-
-State 67
-
-   30 expr: expr . '+' expr
-   31     | expr . '-' expr
-   31     | expr '-' expr .  ['-', '+', ')', ':', ';', ',']
-   32     | expr . '*' expr
-   33     | expr . '/' expr
-
-    '*'  shift, and go to state 61
-    '/'  shift, and go to state 62
-
-    $default  reduce using rule 31 (expr)
-
-    Conflict between rule 31 and token '-' resolved as reduce (%left '-').
-    Conflict between rule 31 and token '+' resolved as reduce (%left '+').
-    Conflict between rule 31 and token '*' resolved as shift ('-' < '*').
-    Conflict between rule 31 and token '/' resolved as shift ('-' < '/').
-
-
-State 68
-
-   30 expr: expr . '+' expr
-   30     | expr '+' expr .  ['-', '+', ')', ':', ';', ',']
-   31     | expr . '-' expr
-   32     | expr . '*' expr
-   33     | expr . '/' expr
-
-    '*'  shift, and go to state 61
-    '/'  shift, and go to state 62
+    KW_AND        shift, and go to state 65
+    KW_OR         shift, and go to state 66
+    TK_OP_EQ      shift, and go to state 67
+    TK_OP_BIGGER  shift, and go to state 68
+    TK_OP_BIGEQ   shift, and go to state 69
+    TK_OP_NOTEQ   shift, and go to state 70
+    '*'           shift, and go to state 73
+    '/'           shift, and go to state 74
 
     $default  reduce using rule 30 (expr)
 
-    Conflict between rule 30 and token '-' resolved as reduce (%left '-').
+    Conflict between rule 30 and token KW_AND resolved as shift ('+' < KW_AND).
+    Conflict between rule 30 and token KW_OR resolved as shift ('+' < KW_OR).
+    Conflict between rule 30 and token TK_OP_EQ resolved as shift ('+' < TK_OP_EQ).
+    Conflict between rule 30 and token TK_OP_BIGGER resolved as shift ('+' < TK_OP_BIGGER).
+    Conflict between rule 30 and token TK_OP_BIGEQ resolved as shift ('+' < TK_OP_BIGEQ).
+    Conflict between rule 30 and token TK_OP_NOTEQ resolved as shift ('+' < TK_OP_NOTEQ).
     Conflict between rule 30 and token '+' resolved as reduce (%left '+').
+    Conflict between rule 30 and token '-' resolved as reduce (%left '-').
     Conflict between rule 30 and token '*' resolved as shift ('+' < '*').
     Conflict between rule 30 and token '/' resolved as shift ('+' < '/').
 
 
+State 63
+
+   29 expr: '-' expr .  ['+', '-', ')', ':', ';', ',']
+   32     | expr . KW_OR expr
+   33     | expr . KW_AND expr
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
+
+    KW_AND        shift, and go to state 65
+    KW_OR         shift, and go to state 66
+    TK_OP_EQ      shift, and go to state 67
+    TK_OP_BIGGER  shift, and go to state 68
+    TK_OP_BIGEQ   shift, and go to state 69
+    TK_OP_NOTEQ   shift, and go to state 70
+    '*'           shift, and go to state 73
+    '/'           shift, and go to state 74
+
+    $default  reduce using rule 29 (expr)
+
+    Conflict between rule 29 and token KW_AND resolved as shift ('-' < KW_AND).
+    Conflict between rule 29 and token KW_OR resolved as shift ('-' < KW_OR).
+    Conflict between rule 29 and token TK_OP_EQ resolved as shift ('-' < TK_OP_EQ).
+    Conflict between rule 29 and token TK_OP_BIGGER resolved as shift ('-' < TK_OP_BIGGER).
+    Conflict between rule 29 and token TK_OP_BIGEQ resolved as shift ('-' < TK_OP_BIGEQ).
+    Conflict between rule 29 and token TK_OP_NOTEQ resolved as shift ('-' < TK_OP_NOTEQ).
+    Conflict between rule 29 and token '+' resolved as reduce (%left '+').
+    Conflict between rule 29 and token '-' resolved as reduce (%left '-').
+    Conflict between rule 29 and token '*' resolved as shift ('-' < '*').
+    Conflict between rule 29 and token '/' resolved as shift ('-' < '/').
+
+
+State 64
+
+   32 expr: expr . KW_OR expr
+   33     | expr . KW_AND expr
+   34     | '(' expr . ')'
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
+
+    KW_AND        shift, and go to state 65
+    KW_OR         shift, and go to state 66
+    TK_OP_EQ      shift, and go to state 67
+    TK_OP_BIGGER  shift, and go to state 68
+    TK_OP_BIGEQ   shift, and go to state 69
+    TK_OP_NOTEQ   shift, and go to state 70
+    '+'           shift, and go to state 71
+    '-'           shift, and go to state 72
+    '*'           shift, and go to state 73
+    '/'           shift, and go to state 74
+    ')'           shift, and go to state 78
+
+
+State 65
+
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '-' expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   33     | expr KW_AND . expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
+
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
+
+    expr  go to state 79
+
+
+State 66
+
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '-' expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   32     | expr KW_OR . expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
+
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
+
+    expr  go to state 80
+
+
+State 67
+
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '-' expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
+   42     | expr TK_OP_EQ . expr
+
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
+
+    expr  go to state 81
+
+
+State 68
+
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '-' expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   39     | expr TK_OP_BIGGER . expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
+
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
+
+    expr  go to state 82
+
+
 State 69
 
-   30 expr: expr . '+' expr
-   31     | expr . '-' expr
-   32     | expr . '*' expr
-   32     | expr '*' expr .  ['-', '+', '*', '/', ')', ':', ';', ',']
-   33     | expr . '/' expr
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '-' expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   40     | expr TK_OP_BIGEQ . expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
 
-    $default  reduce using rule 32 (expr)
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
 
-    Conflict between rule 32 and token '-' resolved as reduce ('-' < '*').
-    Conflict between rule 32 and token '+' resolved as reduce ('+' < '*').
-    Conflict between rule 32 and token '*' resolved as reduce (%left '*').
-    Conflict between rule 32 and token '/' resolved as reduce (%left '/').
+    expr  go to state 83
 
 
 State 70
 
-   30 expr: expr . '+' expr
-   31     | expr . '-' expr
-   32     | expr . '*' expr
-   33     | expr . '/' expr
-   33     | expr '/' expr .  ['-', '+', '*', '/', ')', ':', ';', ',']
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '-' expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   41     | expr TK_OP_NOTEQ . expr
+   42     | . expr TK_OP_EQ expr
 
-    $default  reduce using rule 33 (expr)
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
 
-    Conflict between rule 33 and token '-' resolved as reduce ('-' < '/').
-    Conflict between rule 33 and token '+' resolved as reduce ('+' < '/').
-    Conflict between rule 33 and token '*' resolved as reduce (%left '*').
-    Conflict between rule 33 and token '/' resolved as reduce (%left '/').
+    expr  go to state 84
 
 
 State 71
 
-   39 par_decl: decl_id . ':' type_spec
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '-' expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   35     | expr '+' . expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
 
-    ':'  shift, and go to state 75
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
+
+    expr  go to state 85
 
 
 State 72
 
-   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list . ')' ':' type_spec ARROW '{' local_decl body return '}'
-   37 par_decl_list: par_decl_list . ',' par_decl
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '-' expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   36     | expr '-' . expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
 
-    ')'  shift, and go to state 76
-    ','  shift, and go to state 77
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
+
+    expr  go to state 86
 
 
 State 73
 
-   38 par_decl_list: par_decl .
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '-' expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   37     | expr '*' . expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
 
-    $default  reduce using rule 38 (par_decl_list)
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
+
+    expr  go to state 87
 
 
 State 74
 
-    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' . ')' ':' KW_INT ARROW '{' local_decl body return '}'
+   26 expr: . POSINT
+   27     | . REAL
+   28     | . STRING
+   29     | . '-' expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   38     | expr '/' . expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
 
-    ')'  shift, and go to state 78
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
+
+    expr  go to state 88
 
 
 State 75
 
-   22 type_spec: . KW_INT
-   23          | . KW_REAL
-   24          | . KW_BOOL
-   25          | . KW_STRING
-   39 par_decl: decl_id ':' . type_spec
-
-    KW_INT     shift, and go to state 36
-    KW_REAL    shift, and go to state 37
-    KW_STRING  shift, and go to state 38
-    KW_BOOL    shift, and go to state 39
-
-    type_spec  go to state 79
-
-
-State 76
-
-   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' . ':' type_spec ARROW '{' local_decl body return '}'
-
-    ':'  shift, and go to state 80
-
-
-State 77
-
    19 decl_id: . IDENT
    20        | . '[' ']' IDENT
    21        | . IDENT '[' POSINT ']'
-   37 par_decl_list: par_decl_list ',' . par_decl
-   39 par_decl: . decl_id ':' type_spec
-   40         | . %empty  [')', ',']
+   45 func_decl: KW_CONST decl_id ASSIGN '(' . par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+   46 par_decl_list: . par_decl_list ',' par_decl
+   47              | . par_decl
+   48 par_decl: . decl_id ':' type_spec
+   49         | . %empty  [')', ',']
 
     IDENT  shift, and go to state 8
     '['    shift, and go to state 9
 
-    $default  reduce using rule 40 (par_decl)
+    $default  reduce using rule 49 (par_decl)
 
-    decl_id   go to state 71
-    par_decl  go to state 81
+    decl_id        go to state 89
+    par_decl_list  go to state 90
+    par_decl       go to state 91
+
+
+State 76
+
+    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN . '(' ')' ':' KW_INT ARROW '{' local_decl body return '}'
+
+    '('  shift, and go to state 92
+
+
+State 77
+
+   45 func_decl: KW_CONST decl_id ASSIGN . '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}'
+
+    '('  shift, and go to state 75
 
 
 State 78
 
-    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' . ':' KW_INT ARROW '{' local_decl body return '}'
+   34 expr: '(' expr ')' .
 
-    ':'  shift, and go to state 82
+    $default  reduce using rule 34 (expr)
 
 
 State 79
 
-   39 par_decl: decl_id ':' type_spec .
+   32 expr: expr . KW_OR expr
+   33     | expr . KW_AND expr
+   33     | expr KW_AND expr .  [KW_AND, KW_OR, TK_OP_EQ, TK_OP_BIGGER, TK_OP_BIGEQ, TK_OP_NOTEQ, '+', '-', '*', '/', ')', ':', ';', ',']
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
 
-    $default  reduce using rule 39 (par_decl)
+    $default  reduce using rule 33 (expr)
+
+    Conflict between rule 33 and token KW_AND resolved as reduce (%left KW_AND).
+    Conflict between rule 33 and token KW_OR resolved as reduce (%left KW_OR).
+    Conflict between rule 33 and token TK_OP_EQ resolved as reduce (TK_OP_EQ < KW_AND).
+    Conflict between rule 33 and token TK_OP_BIGGER resolved as reduce (TK_OP_BIGGER < KW_AND).
+    Conflict between rule 33 and token TK_OP_BIGEQ resolved as reduce (TK_OP_BIGEQ < KW_AND).
+    Conflict between rule 33 and token TK_OP_NOTEQ resolved as reduce (TK_OP_NOTEQ < KW_AND).
+    Conflict between rule 33 and token '+' resolved as reduce ('+' < KW_AND).
+    Conflict between rule 33 and token '-' resolved as reduce ('-' < KW_AND).
+    Conflict between rule 33 and token '*' resolved as reduce ('*' < KW_AND).
+    Conflict between rule 33 and token '/' resolved as reduce ('/' < KW_AND).
 
 
 State 80
+
+   32 expr: expr . KW_OR expr
+   32     | expr KW_OR expr .  [KW_AND, KW_OR, TK_OP_EQ, TK_OP_BIGGER, TK_OP_BIGEQ, TK_OP_NOTEQ, '+', '-', '*', '/', ')', ':', ';', ',']
+   33     | expr . KW_AND expr
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
+
+    $default  reduce using rule 32 (expr)
+
+    Conflict between rule 32 and token KW_AND resolved as reduce (%left KW_AND).
+    Conflict between rule 32 and token KW_OR resolved as reduce (%left KW_OR).
+    Conflict between rule 32 and token TK_OP_EQ resolved as reduce (TK_OP_EQ < KW_OR).
+    Conflict between rule 32 and token TK_OP_BIGGER resolved as reduce (TK_OP_BIGGER < KW_OR).
+    Conflict between rule 32 and token TK_OP_BIGEQ resolved as reduce (TK_OP_BIGEQ < KW_OR).
+    Conflict between rule 32 and token TK_OP_NOTEQ resolved as reduce (TK_OP_NOTEQ < KW_OR).
+    Conflict between rule 32 and token '+' resolved as reduce ('+' < KW_OR).
+    Conflict between rule 32 and token '-' resolved as reduce ('-' < KW_OR).
+    Conflict between rule 32 and token '*' resolved as reduce ('*' < KW_OR).
+    Conflict between rule 32 and token '/' resolved as reduce ('/' < KW_OR).
+
+
+State 81
+
+   32 expr: expr . KW_OR expr
+   33     | expr . KW_AND expr
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
+   42     | expr TK_OP_EQ expr .  [TK_OP_EQ, TK_OP_BIGGER, TK_OP_BIGEQ, TK_OP_NOTEQ, '+', '-', '*', '/', ')', ':', ';', ',']
+
+    KW_AND  shift, and go to state 65
+    KW_OR   shift, and go to state 66
+
+    $default  reduce using rule 42 (expr)
+
+    Conflict between rule 42 and token KW_AND resolved as shift (TK_OP_EQ < KW_AND).
+    Conflict between rule 42 and token KW_OR resolved as shift (TK_OP_EQ < KW_OR).
+    Conflict between rule 42 and token TK_OP_EQ resolved as reduce (%left TK_OP_EQ).
+    Conflict between rule 42 and token TK_OP_BIGGER resolved as reduce (%left TK_OP_BIGGER).
+    Conflict between rule 42 and token TK_OP_BIGEQ resolved as reduce (%left TK_OP_BIGEQ).
+    Conflict between rule 42 and token TK_OP_NOTEQ resolved as reduce (%left TK_OP_NOTEQ).
+    Conflict between rule 42 and token '+' resolved as reduce ('+' < TK_OP_EQ).
+    Conflict between rule 42 and token '-' resolved as reduce ('-' < TK_OP_EQ).
+    Conflict between rule 42 and token '*' resolved as reduce ('*' < TK_OP_EQ).
+    Conflict between rule 42 and token '/' resolved as reduce ('/' < TK_OP_EQ).
+
+
+State 82
+
+   32 expr: expr . KW_OR expr
+   33     | expr . KW_AND expr
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   39     | expr TK_OP_BIGGER expr .  [TK_OP_EQ, TK_OP_BIGGER, TK_OP_BIGEQ, TK_OP_NOTEQ, '+', '-', '*', '/', ')', ':', ';', ',']
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
+
+    KW_AND  shift, and go to state 65
+    KW_OR   shift, and go to state 66
+
+    $default  reduce using rule 39 (expr)
+
+    Conflict between rule 39 and token KW_AND resolved as shift (TK_OP_BIGGER < KW_AND).
+    Conflict between rule 39 and token KW_OR resolved as shift (TK_OP_BIGGER < KW_OR).
+    Conflict between rule 39 and token TK_OP_EQ resolved as reduce (%left TK_OP_EQ).
+    Conflict between rule 39 and token TK_OP_BIGGER resolved as reduce (%left TK_OP_BIGGER).
+    Conflict between rule 39 and token TK_OP_BIGEQ resolved as reduce (%left TK_OP_BIGEQ).
+    Conflict between rule 39 and token TK_OP_NOTEQ resolved as reduce (%left TK_OP_NOTEQ).
+    Conflict between rule 39 and token '+' resolved as reduce ('+' < TK_OP_BIGGER).
+    Conflict between rule 39 and token '-' resolved as reduce ('-' < TK_OP_BIGGER).
+    Conflict between rule 39 and token '*' resolved as reduce ('*' < TK_OP_BIGGER).
+    Conflict between rule 39 and token '/' resolved as reduce ('/' < TK_OP_BIGGER).
+
+
+State 83
+
+   32 expr: expr . KW_OR expr
+   33     | expr . KW_AND expr
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   40     | expr TK_OP_BIGEQ expr .  [TK_OP_EQ, TK_OP_BIGGER, TK_OP_BIGEQ, TK_OP_NOTEQ, '+', '-', '*', '/', ')', ':', ';', ',']
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
+
+    KW_AND  shift, and go to state 65
+    KW_OR   shift, and go to state 66
+
+    $default  reduce using rule 40 (expr)
+
+    Conflict between rule 40 and token KW_AND resolved as shift (TK_OP_BIGEQ < KW_AND).
+    Conflict between rule 40 and token KW_OR resolved as shift (TK_OP_BIGEQ < KW_OR).
+    Conflict between rule 40 and token TK_OP_EQ resolved as reduce (%left TK_OP_EQ).
+    Conflict between rule 40 and token TK_OP_BIGGER resolved as reduce (%left TK_OP_BIGGER).
+    Conflict between rule 40 and token TK_OP_BIGEQ resolved as reduce (%left TK_OP_BIGEQ).
+    Conflict between rule 40 and token TK_OP_NOTEQ resolved as reduce (%left TK_OP_NOTEQ).
+    Conflict between rule 40 and token '+' resolved as reduce ('+' < TK_OP_BIGEQ).
+    Conflict between rule 40 and token '-' resolved as reduce ('-' < TK_OP_BIGEQ).
+    Conflict between rule 40 and token '*' resolved as reduce ('*' < TK_OP_BIGEQ).
+    Conflict between rule 40 and token '/' resolved as reduce ('/' < TK_OP_BIGEQ).
+
+
+State 84
+
+   32 expr: expr . KW_OR expr
+   33     | expr . KW_AND expr
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   41     | expr TK_OP_NOTEQ expr .  [TK_OP_EQ, TK_OP_BIGGER, TK_OP_BIGEQ, TK_OP_NOTEQ, '+', '-', '*', '/', ')', ':', ';', ',']
+   42     | expr . TK_OP_EQ expr
+
+    KW_AND  shift, and go to state 65
+    KW_OR   shift, and go to state 66
+
+    $default  reduce using rule 41 (expr)
+
+    Conflict between rule 41 and token KW_AND resolved as shift (TK_OP_NOTEQ < KW_AND).
+    Conflict between rule 41 and token KW_OR resolved as shift (TK_OP_NOTEQ < KW_OR).
+    Conflict between rule 41 and token TK_OP_EQ resolved as reduce (%left TK_OP_EQ).
+    Conflict between rule 41 and token TK_OP_BIGGER resolved as reduce (%left TK_OP_BIGGER).
+    Conflict between rule 41 and token TK_OP_BIGEQ resolved as reduce (%left TK_OP_BIGEQ).
+    Conflict between rule 41 and token TK_OP_NOTEQ resolved as reduce (%left TK_OP_NOTEQ).
+    Conflict between rule 41 and token '+' resolved as reduce ('+' < TK_OP_NOTEQ).
+    Conflict between rule 41 and token '-' resolved as reduce ('-' < TK_OP_NOTEQ).
+    Conflict between rule 41 and token '*' resolved as reduce ('*' < TK_OP_NOTEQ).
+    Conflict between rule 41 and token '/' resolved as reduce ('/' < TK_OP_NOTEQ).
+
+
+State 85
+
+   32 expr: expr . KW_OR expr
+   33     | expr . KW_AND expr
+   35     | expr . '+' expr
+   35     | expr '+' expr .  ['+', '-', ')', ':', ';', ',']
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
+
+    KW_AND        shift, and go to state 65
+    KW_OR         shift, and go to state 66
+    TK_OP_EQ      shift, and go to state 67
+    TK_OP_BIGGER  shift, and go to state 68
+    TK_OP_BIGEQ   shift, and go to state 69
+    TK_OP_NOTEQ   shift, and go to state 70
+    '*'           shift, and go to state 73
+    '/'           shift, and go to state 74
+
+    $default  reduce using rule 35 (expr)
+
+    Conflict between rule 35 and token KW_AND resolved as shift ('+' < KW_AND).
+    Conflict between rule 35 and token KW_OR resolved as shift ('+' < KW_OR).
+    Conflict between rule 35 and token TK_OP_EQ resolved as shift ('+' < TK_OP_EQ).
+    Conflict between rule 35 and token TK_OP_BIGGER resolved as shift ('+' < TK_OP_BIGGER).
+    Conflict between rule 35 and token TK_OP_BIGEQ resolved as shift ('+' < TK_OP_BIGEQ).
+    Conflict between rule 35 and token TK_OP_NOTEQ resolved as shift ('+' < TK_OP_NOTEQ).
+    Conflict between rule 35 and token '+' resolved as reduce (%left '+').
+    Conflict between rule 35 and token '-' resolved as reduce (%left '-').
+    Conflict between rule 35 and token '*' resolved as shift ('+' < '*').
+    Conflict between rule 35 and token '/' resolved as shift ('+' < '/').
+
+
+State 86
+
+   32 expr: expr . KW_OR expr
+   33     | expr . KW_AND expr
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   36     | expr '-' expr .  ['+', '-', ')', ':', ';', ',']
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
+
+    KW_AND        shift, and go to state 65
+    KW_OR         shift, and go to state 66
+    TK_OP_EQ      shift, and go to state 67
+    TK_OP_BIGGER  shift, and go to state 68
+    TK_OP_BIGEQ   shift, and go to state 69
+    TK_OP_NOTEQ   shift, and go to state 70
+    '*'           shift, and go to state 73
+    '/'           shift, and go to state 74
+
+    $default  reduce using rule 36 (expr)
+
+    Conflict between rule 36 and token KW_AND resolved as shift ('-' < KW_AND).
+    Conflict between rule 36 and token KW_OR resolved as shift ('-' < KW_OR).
+    Conflict between rule 36 and token TK_OP_EQ resolved as shift ('-' < TK_OP_EQ).
+    Conflict between rule 36 and token TK_OP_BIGGER resolved as shift ('-' < TK_OP_BIGGER).
+    Conflict between rule 36 and token TK_OP_BIGEQ resolved as shift ('-' < TK_OP_BIGEQ).
+    Conflict between rule 36 and token TK_OP_NOTEQ resolved as shift ('-' < TK_OP_NOTEQ).
+    Conflict between rule 36 and token '+' resolved as reduce (%left '+').
+    Conflict between rule 36 and token '-' resolved as reduce (%left '-').
+    Conflict between rule 36 and token '*' resolved as shift ('-' < '*').
+    Conflict between rule 36 and token '/' resolved as shift ('-' < '/').
+
+
+State 87
+
+   32 expr: expr . KW_OR expr
+   33     | expr . KW_AND expr
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   37     | expr '*' expr .  ['+', '-', '*', '/', ')', ':', ';', ',']
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
+
+    KW_AND        shift, and go to state 65
+    KW_OR         shift, and go to state 66
+    TK_OP_EQ      shift, and go to state 67
+    TK_OP_BIGGER  shift, and go to state 68
+    TK_OP_BIGEQ   shift, and go to state 69
+    TK_OP_NOTEQ   shift, and go to state 70
+
+    $default  reduce using rule 37 (expr)
+
+    Conflict between rule 37 and token KW_AND resolved as shift ('*' < KW_AND).
+    Conflict between rule 37 and token KW_OR resolved as shift ('*' < KW_OR).
+    Conflict between rule 37 and token TK_OP_EQ resolved as shift ('*' < TK_OP_EQ).
+    Conflict between rule 37 and token TK_OP_BIGGER resolved as shift ('*' < TK_OP_BIGGER).
+    Conflict between rule 37 and token TK_OP_BIGEQ resolved as shift ('*' < TK_OP_BIGEQ).
+    Conflict between rule 37 and token TK_OP_NOTEQ resolved as shift ('*' < TK_OP_NOTEQ).
+    Conflict between rule 37 and token '+' resolved as reduce ('+' < '*').
+    Conflict between rule 37 and token '-' resolved as reduce ('-' < '*').
+    Conflict between rule 37 and token '*' resolved as reduce (%left '*').
+    Conflict between rule 37 and token '/' resolved as reduce (%left '/').
+
+
+State 88
+
+   32 expr: expr . KW_OR expr
+   33     | expr . KW_AND expr
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   38     | expr '/' expr .  ['+', '-', '*', '/', ')', ':', ';', ',']
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
+
+    KW_AND        shift, and go to state 65
+    KW_OR         shift, and go to state 66
+    TK_OP_EQ      shift, and go to state 67
+    TK_OP_BIGGER  shift, and go to state 68
+    TK_OP_BIGEQ   shift, and go to state 69
+    TK_OP_NOTEQ   shift, and go to state 70
+
+    $default  reduce using rule 38 (expr)
+
+    Conflict between rule 38 and token KW_AND resolved as shift ('/' < KW_AND).
+    Conflict between rule 38 and token KW_OR resolved as shift ('/' < KW_OR).
+    Conflict between rule 38 and token TK_OP_EQ resolved as shift ('/' < TK_OP_EQ).
+    Conflict between rule 38 and token TK_OP_BIGGER resolved as shift ('/' < TK_OP_BIGGER).
+    Conflict between rule 38 and token TK_OP_BIGEQ resolved as shift ('/' < TK_OP_BIGEQ).
+    Conflict between rule 38 and token TK_OP_NOTEQ resolved as shift ('/' < TK_OP_NOTEQ).
+    Conflict between rule 38 and token '+' resolved as reduce ('+' < '/').
+    Conflict between rule 38 and token '-' resolved as reduce ('-' < '/').
+    Conflict between rule 38 and token '*' resolved as reduce (%left '*').
+    Conflict between rule 38 and token '/' resolved as reduce (%left '/').
+
+
+State 89
+
+   48 par_decl: decl_id . ':' type_spec
+
+    ':'  shift, and go to state 93
+
+
+State 90
+
+   45 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list . ')' ':' type_spec ARROW '{' local_decl body return '}'
+   46 par_decl_list: par_decl_list . ',' par_decl
+
+    ')'  shift, and go to state 94
+    ','  shift, and go to state 95
+
+
+State 91
+
+   47 par_decl_list: par_decl .
+
+    $default  reduce using rule 47 (par_decl_list)
+
+
+State 92
+
+    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' . ')' ':' KW_INT ARROW '{' local_decl body return '}'
+
+    ')'  shift, and go to state 96
+
+
+State 93
 
    22 type_spec: . KW_INT
    23          | . KW_REAL
    24          | . KW_BOOL
    25          | . KW_STRING
-   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' . type_spec ARROW '{' local_decl body return '}'
+   48 par_decl: decl_id ':' . type_spec
 
     KW_INT     shift, and go to state 36
     KW_REAL    shift, and go to state 37
     KW_STRING  shift, and go to state 38
     KW_BOOL    shift, and go to state 39
 
-    type_spec  go to state 83
+    type_spec  go to state 97
 
 
-State 81
+State 94
 
-   37 par_decl_list: par_decl_list ',' par_decl .
+   45 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' . ':' type_spec ARROW '{' local_decl body return '}'
 
-    $default  reduce using rule 37 (par_decl_list)
+    ':'  shift, and go to state 98
 
 
-State 82
+State 95
+
+   19 decl_id: . IDENT
+   20        | . '[' ']' IDENT
+   21        | . IDENT '[' POSINT ']'
+   46 par_decl_list: par_decl_list ',' . par_decl
+   48 par_decl: . decl_id ':' type_spec
+   49         | . %empty  [')', ',']
+
+    IDENT  shift, and go to state 8
+    '['    shift, and go to state 9
+
+    $default  reduce using rule 49 (par_decl)
+
+    decl_id   go to state 89
+    par_decl  go to state 99
+
+
+State 96
+
+    1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' . ':' KW_INT ARROW '{' local_decl body return '}'
+
+    ':'  shift, and go to state 100
+
+
+State 97
+
+   48 par_decl: decl_id ':' type_spec .
+
+    $default  reduce using rule 48 (par_decl)
+
+
+State 98
+
+   22 type_spec: . KW_INT
+   23          | . KW_REAL
+   24          | . KW_BOOL
+   25          | . KW_STRING
+   45 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' . type_spec ARROW '{' local_decl body return '}'
+
+    KW_INT     shift, and go to state 36
+    KW_REAL    shift, and go to state 37
+    KW_STRING  shift, and go to state 38
+    KW_BOOL    shift, and go to state 39
+
+    type_spec  go to state 101
+
+
+State 99
+
+   46 par_decl_list: par_decl_list ',' par_decl .
+
+    $default  reduce using rule 46 (par_decl_list)
+
+
+State 100
 
     1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' . KW_INT ARROW '{' local_decl body return '}'
 
-    KW_INT  shift, and go to state 84
+    KW_INT  shift, and go to state 102
 
 
-State 83
+State 101
 
-   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec . ARROW '{' local_decl body return '}'
+   45 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec . ARROW '{' local_decl body return '}'
 
-    ARROW  shift, and go to state 85
+    ARROW  shift, and go to state 103
 
 
-State 84
+State 102
 
     1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT . ARROW '{' local_decl body return '}'
 
-    ARROW  shift, and go to state 86
+    ARROW  shift, and go to state 104
 
 
-State 85
+State 103
 
-   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW . '{' local_decl body return '}'
+   45 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW . '{' local_decl body return '}'
 
-    '{'  shift, and go to state 87
+    '{'  shift, and go to state 105
 
 
-State 86
+State 104
 
     1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW . '{' local_decl body return '}'
 
-    '{'  shift, and go to state 88
+    '{'  shift, and go to state 106
 
 
-State 87
+State 105
 
     6 var_decl: . KW_LET let_decl_body
-   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' . local_decl body return '}'
-   45 local_decl: . local_decl var_decl
-   46           | . var_decl
+   45 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' . local_decl body return '}'
+   54 local_decl: . local_decl var_decl
+   55           | . var_decl
 
     KW_LET  shift, and go to state 2
 
-    var_decl    go to state 89
-    local_decl  go to state 90
+    var_decl    go to state 107
+    local_decl  go to state 108
 
 
-State 88
+State 106
 
     1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' . local_decl body return '}'
     6 var_decl: . KW_LET let_decl_body
-   45 local_decl: . local_decl var_decl
-   46           | . var_decl
+   54 local_decl: . local_decl var_decl
+   55           | . var_decl
 
     KW_LET  shift, and go to state 2
 
-    var_decl    go to state 89
-    local_decl  go to state 91
+    var_decl    go to state 107
+    local_decl  go to state 109
 
 
-State 89
+State 107
 
-   46 local_decl: var_decl .
+   55 local_decl: var_decl .
 
-    $default  reduce using rule 46 (local_decl)
+    $default  reduce using rule 55 (local_decl)
 
 
-State 90
+State 108
 
     6 var_decl: . KW_LET let_decl_body
    19 decl_id: . IDENT
    20        | . '[' ']' IDENT
    21        | . IDENT '[' POSINT ']'
-   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl . body return '}'
-   41 body: . body command
-   42     | . command
-   43 command: . decl_id ASSIGN expr ';'
-   44        | . func_call
-   45 local_decl: local_decl . var_decl
-   47 func_call: . decl_id '(' param_list ')' ';'
+   45 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl . body return '}'
+   50 body: . body command
+   51     | . command
+   52 command: . decl_id ASSIGN expr ';'
+   53        | . func_call
+   54 local_decl: local_decl . var_decl
+   56 func_call: . decl_id '(' param_list ')' ';'
 
     KW_LET  shift, and go to state 2
     IDENT   shift, and go to state 8
     '['     shift, and go to state 9
 
-    var_decl   go to state 92
-    decl_id    go to state 93
-    body       go to state 94
-    command    go to state 95
-    func_call  go to state 96
+    var_decl   go to state 110
+    decl_id    go to state 111
+    body       go to state 112
+    command    go to state 113
+    func_call  go to state 114
 
 
-State 91
+State 109
 
     1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl . body return '}'
     6 var_decl: . KW_LET let_decl_body
    19 decl_id: . IDENT
    20        | . '[' ']' IDENT
    21        | . IDENT '[' POSINT ']'
-   41 body: . body command
-   42     | . command
-   43 command: . decl_id ASSIGN expr ';'
-   44        | . func_call
-   45 local_decl: local_decl . var_decl
-   47 func_call: . decl_id '(' param_list ')' ';'
+   50 body: . body command
+   51     | . command
+   52 command: . decl_id ASSIGN expr ';'
+   53        | . func_call
+   54 local_decl: local_decl . var_decl
+   56 func_call: . decl_id '(' param_list ')' ';'
 
     KW_LET  shift, and go to state 2
     IDENT   shift, and go to state 8
     '['     shift, and go to state 9
 
-    var_decl   go to state 92
-    decl_id    go to state 93
-    body       go to state 97
-    command    go to state 95
-    func_call  go to state 96
+    var_decl   go to state 110
+    decl_id    go to state 111
+    body       go to state 115
+    command    go to state 113
+    func_call  go to state 114
 
 
-State 92
+State 110
 
-   45 local_decl: local_decl var_decl .
+   54 local_decl: local_decl var_decl .
 
-    $default  reduce using rule 45 (local_decl)
-
-
-State 93
-
-   43 command: decl_id . ASSIGN expr ';'
-   47 func_call: decl_id . '(' param_list ')' ';'
-
-    ASSIGN  shift, and go to state 98
-    '('     shift, and go to state 99
+    $default  reduce using rule 54 (local_decl)
 
 
-State 94
+State 111
+
+   52 command: decl_id . ASSIGN expr ';'
+   56 func_call: decl_id . '(' param_list ')' ';'
+
+    ASSIGN  shift, and go to state 116
+    '('     shift, and go to state 117
+
+
+State 112
 
    19 decl_id: . IDENT
    20        | . '[' ']' IDENT
    21        | . IDENT '[' POSINT ']'
-   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body . return '}'
-   41 body: body . command
-   43 command: . decl_id ASSIGN expr ';'
-   44        | . func_call
-   47 func_call: . decl_id '(' param_list ')' ';'
-   52 return: . KW_RETURN expr ';'
-   53       | . KW_RETURN decl_id ';'
-   54       | . KW_RETURN ';'
-   55       | . %empty  ['}']
+   45 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body . return '}'
+   50 body: body . command
+   52 command: . decl_id ASSIGN expr ';'
+   53        | . func_call
+   56 func_call: . decl_id '(' param_list ')' ';'
+   61 return: . KW_RETURN expr ';'
+   62       | . KW_RETURN decl_id ';'
+   63       | . KW_RETURN ';'
+   64       | . %empty  ['}']
 
-    KW_RETURN  shift, and go to state 100
+    KW_RETURN  shift, and go to state 118
     IDENT      shift, and go to state 8
     '['        shift, and go to state 9
 
-    $default  reduce using rule 55 (return)
+    $default  reduce using rule 64 (return)
 
-    decl_id    go to state 93
-    command    go to state 101
-    func_call  go to state 96
-    return     go to state 102
-
-
-State 95
-
-   42 body: command .
-
-    $default  reduce using rule 42 (body)
+    decl_id    go to state 111
+    command    go to state 119
+    func_call  go to state 114
+    return     go to state 120
 
 
-State 96
+State 113
 
-   44 command: func_call .
+   51 body: command .
 
-    $default  reduce using rule 44 (command)
+    $default  reduce using rule 51 (body)
 
 
-State 97
+State 114
+
+   53 command: func_call .
+
+    $default  reduce using rule 53 (command)
+
+
+State 115
 
     1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body . return '}'
    19 decl_id: . IDENT
    20        | . '[' ']' IDENT
    21        | . IDENT '[' POSINT ']'
-   41 body: body . command
-   43 command: . decl_id ASSIGN expr ';'
-   44        | . func_call
-   47 func_call: . decl_id '(' param_list ')' ';'
-   52 return: . KW_RETURN expr ';'
-   53       | . KW_RETURN decl_id ';'
-   54       | . KW_RETURN ';'
-   55       | . %empty  ['}']
+   50 body: body . command
+   52 command: . decl_id ASSIGN expr ';'
+   53        | . func_call
+   56 func_call: . decl_id '(' param_list ')' ';'
+   61 return: . KW_RETURN expr ';'
+   62       | . KW_RETURN decl_id ';'
+   63       | . KW_RETURN ';'
+   64       | . %empty  ['}']
 
-    KW_RETURN  shift, and go to state 100
+    KW_RETURN  shift, and go to state 118
     IDENT      shift, and go to state 8
     '['        shift, and go to state 9
 
-    $default  reduce using rule 55 (return)
+    $default  reduce using rule 64 (return)
 
-    decl_id    go to state 93
-    command    go to state 101
-    func_call  go to state 96
-    return     go to state 103
+    decl_id    go to state 111
+    command    go to state 119
+    func_call  go to state 114
+    return     go to state 121
 
 
-State 98
+State 116
 
    26 expr: . POSINT
    27     | . REAL
    28     | . STRING
-   29     | . '(' expr ')'
-   30     | . expr '+' expr
-   31     | . expr '-' expr
-   32     | . expr '*' expr
-   33     | . expr '/' expr
-   43 command: decl_id ASSIGN . expr ';'
+   29     | . '-' expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
+   52 command: decl_id ASSIGN . expr ';'
 
-    STRING  shift, and go to state 47
-    POSINT  shift, and go to state 48
-    REAL    shift, and go to state 49
-    '('     shift, and go to state 50
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
 
-    expr  go to state 104
+    expr  go to state 122
 
 
-State 99
+State 117
 
    19 decl_id: . IDENT
    20        | . '[' ']' IDENT
    21        | . IDENT '[' POSINT ']'
-   47 func_call: decl_id '(' . param_list ')' ';'
-   48 param_list: . param_list ',' param
-   49           | . param
-   50 param: . decl_id
-   51      | . %empty  [')', ',']
+   56 func_call: decl_id '(' . param_list ')' ';'
+   57 param_list: . param_list ',' param
+   58           | . param
+   59 param: . decl_id
+   60      | . %empty  [')', ',']
 
     IDENT  shift, and go to state 8
     '['    shift, and go to state 9
 
-    $default  reduce using rule 51 (param)
+    $default  reduce using rule 60 (param)
 
-    decl_id     go to state 105
-    param_list  go to state 106
-    param       go to state 107
+    decl_id     go to state 123
+    param_list  go to state 124
+    param       go to state 125
 
 
-State 100
+State 118
 
    19 decl_id: . IDENT
    20        | . '[' ']' IDENT
@@ -1364,184 +2131,220 @@ State 100
    26 expr: . POSINT
    27     | . REAL
    28     | . STRING
-   29     | . '(' expr ')'
-   30     | . expr '+' expr
-   31     | . expr '-' expr
-   32     | . expr '*' expr
-   33     | . expr '/' expr
-   52 return: KW_RETURN . expr ';'
-   53       | KW_RETURN . decl_id ';'
-   54       | KW_RETURN . ';'
+   29     | . '-' expr
+   30     | . '+' expr
+   31     | . KW_NOT expr
+   32     | . expr KW_OR expr
+   33     | . expr KW_AND expr
+   34     | . '(' expr ')'
+   35     | . expr '+' expr
+   36     | . expr '-' expr
+   37     | . expr '*' expr
+   38     | . expr '/' expr
+   39     | . expr TK_OP_BIGGER expr
+   40     | . expr TK_OP_BIGEQ expr
+   41     | . expr TK_OP_NOTEQ expr
+   42     | . expr TK_OP_EQ expr
+   61 return: KW_RETURN . expr ';'
+   62       | KW_RETURN . decl_id ';'
+   63       | KW_RETURN . ';'
 
-    STRING  shift, and go to state 47
+    KW_NOT  shift, and go to state 47
+    STRING  shift, and go to state 48
     IDENT   shift, and go to state 8
-    POSINT  shift, and go to state 48
-    REAL    shift, and go to state 49
-    '('     shift, and go to state 50
-    ';'     shift, and go to state 108
+    POSINT  shift, and go to state 49
+    REAL    shift, and go to state 50
+    '+'     shift, and go to state 51
+    '-'     shift, and go to state 52
+    '('     shift, and go to state 53
+    ';'     shift, and go to state 126
     '['     shift, and go to state 9
 
-    decl_id  go to state 109
-    expr     go to state 110
+    decl_id  go to state 127
+    expr     go to state 128
 
 
-State 101
+State 119
 
-   41 body: body command .
+   50 body: body command .
 
-    $default  reduce using rule 41 (body)
-
-
-State 102
-
-   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return . '}'
-
-    '}'  shift, and go to state 111
+    $default  reduce using rule 50 (body)
 
 
-State 103
+State 120
+
+   45 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return . '}'
+
+    '}'  shift, and go to state 129
+
+
+State 121
 
     1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return . '}'
 
-    '}'  shift, and go to state 112
+    '}'  shift, and go to state 130
 
 
-State 104
+State 122
 
-   30 expr: expr . '+' expr
-   31     | expr . '-' expr
-   32     | expr . '*' expr
-   33     | expr . '/' expr
-   43 command: decl_id ASSIGN expr . ';'
+   32 expr: expr . KW_OR expr
+   33     | expr . KW_AND expr
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
+   52 command: decl_id ASSIGN expr . ';'
 
-    '-'  shift, and go to state 59
-    '+'  shift, and go to state 60
-    '*'  shift, and go to state 61
-    '/'  shift, and go to state 62
-    ';'  shift, and go to state 113
-
-
-State 105
-
-   50 param: decl_id .
-
-    $default  reduce using rule 50 (param)
-
-
-State 106
-
-   47 func_call: decl_id '(' param_list . ')' ';'
-   48 param_list: param_list . ',' param
-
-    ')'  shift, and go to state 114
-    ','  shift, and go to state 115
+    KW_AND        shift, and go to state 65
+    KW_OR         shift, and go to state 66
+    TK_OP_EQ      shift, and go to state 67
+    TK_OP_BIGGER  shift, and go to state 68
+    TK_OP_BIGEQ   shift, and go to state 69
+    TK_OP_NOTEQ   shift, and go to state 70
+    '+'           shift, and go to state 71
+    '-'           shift, and go to state 72
+    '*'           shift, and go to state 73
+    '/'           shift, and go to state 74
+    ';'           shift, and go to state 131
 
 
-State 107
+State 123
 
-   49 param_list: param .
+   59 param: decl_id .
 
-    $default  reduce using rule 49 (param_list)
-
-
-State 108
-
-   54 return: KW_RETURN ';' .
-
-    $default  reduce using rule 54 (return)
+    $default  reduce using rule 59 (param)
 
 
-State 109
+State 124
 
-   53 return: KW_RETURN decl_id . ';'
+   56 func_call: decl_id '(' param_list . ')' ';'
+   57 param_list: param_list . ',' param
 
-    ';'  shift, and go to state 116
-
-
-State 110
-
-   30 expr: expr . '+' expr
-   31     | expr . '-' expr
-   32     | expr . '*' expr
-   33     | expr . '/' expr
-   52 return: KW_RETURN expr . ';'
-
-    '-'  shift, and go to state 59
-    '+'  shift, and go to state 60
-    '*'  shift, and go to state 61
-    '/'  shift, and go to state 62
-    ';'  shift, and go to state 117
+    ')'  shift, and go to state 132
+    ','  shift, and go to state 133
 
 
-State 111
+State 125
 
-   36 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}' .
+   58 param_list: param .
 
-    $default  reduce using rule 36 (func_decl)
+    $default  reduce using rule 58 (param_list)
 
 
-State 112
+State 126
+
+   63 return: KW_RETURN ';' .
+
+    $default  reduce using rule 63 (return)
+
+
+State 127
+
+   62 return: KW_RETURN decl_id . ';'
+
+    ';'  shift, and go to state 134
+
+
+State 128
+
+   32 expr: expr . KW_OR expr
+   33     | expr . KW_AND expr
+   35     | expr . '+' expr
+   36     | expr . '-' expr
+   37     | expr . '*' expr
+   38     | expr . '/' expr
+   39     | expr . TK_OP_BIGGER expr
+   40     | expr . TK_OP_BIGEQ expr
+   41     | expr . TK_OP_NOTEQ expr
+   42     | expr . TK_OP_EQ expr
+   61 return: KW_RETURN expr . ';'
+
+    KW_AND        shift, and go to state 65
+    KW_OR         shift, and go to state 66
+    TK_OP_EQ      shift, and go to state 67
+    TK_OP_BIGGER  shift, and go to state 68
+    TK_OP_BIGEQ   shift, and go to state 69
+    TK_OP_NOTEQ   shift, and go to state 70
+    '+'           shift, and go to state 71
+    '-'           shift, and go to state 72
+    '*'           shift, and go to state 73
+    '/'           shift, and go to state 74
+    ';'           shift, and go to state 135
+
+
+State 129
+
+   45 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}' .
+
+    $default  reduce using rule 45 (func_decl)
+
+
+State 130
 
     1 program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}' .
 
     $default  reduce using rule 1 (program)
 
 
-State 113
+State 131
 
-   43 command: decl_id ASSIGN expr ';' .
+   52 command: decl_id ASSIGN expr ';' .
 
-    $default  reduce using rule 43 (command)
-
-
-State 114
-
-   47 func_call: decl_id '(' param_list ')' . ';'
-
-    ';'  shift, and go to state 118
+    $default  reduce using rule 52 (command)
 
 
-State 115
+State 132
+
+   56 func_call: decl_id '(' param_list ')' . ';'
+
+    ';'  shift, and go to state 136
+
+
+State 133
 
    19 decl_id: . IDENT
    20        | . '[' ']' IDENT
    21        | . IDENT '[' POSINT ']'
-   48 param_list: param_list ',' . param
-   50 param: . decl_id
-   51      | . %empty  [')', ',']
+   57 param_list: param_list ',' . param
+   59 param: . decl_id
+   60      | . %empty  [')', ',']
 
     IDENT  shift, and go to state 8
     '['    shift, and go to state 9
 
-    $default  reduce using rule 51 (param)
+    $default  reduce using rule 60 (param)
 
-    decl_id  go to state 105
-    param    go to state 119
-
-
-State 116
-
-   53 return: KW_RETURN decl_id ';' .
-
-    $default  reduce using rule 53 (return)
+    decl_id  go to state 123
+    param    go to state 137
 
 
-State 117
+State 134
 
-   52 return: KW_RETURN expr ';' .
+   62 return: KW_RETURN decl_id ';' .
 
-    $default  reduce using rule 52 (return)
-
-
-State 118
-
-   47 func_call: decl_id '(' param_list ')' ';' .
-
-    $default  reduce using rule 47 (func_call)
+    $default  reduce using rule 62 (return)
 
 
-State 119
+State 135
 
-   48 param_list: param_list ',' param .
+   61 return: KW_RETURN expr ';' .
 
-    $default  reduce using rule 48 (param_list)
+    $default  reduce using rule 61 (return)
+
+
+State 136
+
+   56 func_call: decl_id '(' param_list ')' ';' .
+
+    $default  reduce using rule 56 (func_call)
+
+
+State 137
+
+   57 param_list: param_list ',' param .
+
+    $default  reduce using rule 57 (param_list)

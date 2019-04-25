@@ -60,8 +60,11 @@
 %type <crepr> func_decl func_decl_list par_decl_list par_decl return
 %type <crepr> func_call param param_list local_decl
 
-%left '-' '+'
-%left '*' '/'
+%left KW_NOT
+%left '+' '-'
+%left '*' '/' '%'
+%left TK_OP_EQ TK_OP_NOTEQ TK_OP_BIGGER TK_OP_BIGEQ
+%left KW_AND KW_OR
 
 %%
 
@@ -75,7 +78,7 @@ program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT 
     printf("/* program */ \n\n");
     printf("%s\n\n", $1);
     printf("%s\n\n", $2);
-    printf("int main() {\n%s%s%s\n} \n", $12,$13,$14);
+    printf("int main() {\n%s\n%s\n%s\n\n\n} \n", $12,$13,$14);
   }
 }
 ;
@@ -140,11 +143,20 @@ expr:
   POSINT
 | REAL
 | STRING
+| '-' expr  { $$ = template("-%s", $2); }
+| '+' expr  { $$ = template("+%s", $2); }
+| KW_NOT expr { $$ = template("not %s", $2); }
+| expr KW_OR expr { $$ = template("%s or %s", $1, $3); }
+| expr KW_AND expr { $$ = template("%s and %s", $1, $3); }
 | '(' expr ')' { $$ = template("(%s)", $2); }
 | expr '+' expr { $$ = template("%s + %s", $1, $3); }
 | expr '-' expr { $$ = template("%s - %s", $1, $3); }
 | expr '*' expr { $$ = template("%s * %s", $1, $3); }
 | expr '/' expr { $$ = template("%s / %s", $1, $3); }
+| expr TK_OP_BIGGER expr { $$ = template("%s < %s", $1, $3); }
+| expr TK_OP_BIGEQ expr { $$ = template("%s <= %s", $1, $3); }
+| expr TK_OP_NOTEQ expr { $$ = template("%s != %s", $1, $3); }
+| expr TK_OP_EQ expr { $$ = template("%s == %s", $1, $3); }
 ;
 
 //FUNCTIONS
