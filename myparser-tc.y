@@ -163,21 +163,21 @@ expr:
 | func_call
 | '-' expr  { $$ = template("-%s", $2); }
 | '+' expr  { $$ = template("+%s", $2); }
-| KW_NOT expr { $$ = template("not %s", $2); }
-| expr KW_OR expr { $$ = template("%s or %s", $1, $3); }
-| expr KW_AND expr { $$ = template("%s and %s", $1, $3); }
+| KW_NOT expr { $$ = template("!%s", $2); }
+| expr KW_OR expr { $$ = template("%s || %s", $1, $3); }
+| expr KW_AND expr { $$ = template("%s && %s", $1, $3); }
 | '(' expr ')' { $$ = template("(%s)", $2); }
 | expr '+' expr { $$ = template("%s + %s", $1, $3); }
 | expr '-' expr { $$ = template("%s - %s", $1, $3); }
 | expr '*' expr { $$ = template("%s * %s", $1, $3); }
 | expr '/' expr { $$ = template("%s / %s", $1, $3); }
-| expr '%' expr { $$ = template("%s % %s", $1, $3); }
+| expr '%' expr { $$ = template("%s mod %s", $1, $3); }
 | expr TK_OP_BIGGER expr { $$ = template("%s < %s", $1, $3); }
 | expr TK_OP_BIGEQ expr { $$ = template("%s <= %s", $1, $3); }
 | expr TK_OP_NOTEQ expr { $$ = template("%s != %s", $1, $3); }
 | expr TK_OP_EQ expr { $$ = template("%s == %s", $1, $3); }
-| KW_TRUE { $$ = template("xxxx"); }
-| KW_FALSE { $$ = template("xxxx"); }
+| KW_TRUE { $$ = template("1"); }
+| KW_FALSE { $$ = template("0"); }
 ;
 
 //FUNCTIONS
@@ -235,23 +235,22 @@ return: KW_RETURN expr ';' { $$ = template("return %s;", $2); }
 | %empty { $$="";} 
 
 //IF
-if_command: KW_IF expr KW_THEN body if_rest KW_FI ';' { $$ = template("if %s {\n%s \n%s\n};", $2, $4, $5); }
+if_command: KW_IF expr KW_THEN body if_rest { $$ = template("if (%s) {\n%s%s", $2, $4, $5); }
 ;
 
-if_rest: KW_ELSE body { $$ = template("\n}else{ %s;", $2); }
-| %empty { $$="";} 
+if_rest: KW_ELSE body KW_FI ';'{ $$ = template("\n}else{\n%s\n}", $2); }
+| KW_ELSE KW_IF expr KW_THEN body if_rest{ $$ = template("\n}else if (%s) {\n%s%s", $3, $5, $6); }
+| KW_FI ';' { $$="\n};";}  
 ;
 
 //WHILE
-while_command: KW_WHILE expr KW_LOOP body KW_POOL ';' { $$ = template("while %s {\n%s \n};", $2, $4); }
+while_command: KW_WHILE expr KW_LOOP body KW_POOL ';' { $$ = template("while (%s) {\n%s \n};", $2, $4); }
 ;
 
 %%
 int main () {
 
-  if ( yyparse() == 0 )
-    printf("Accepted!\n");
-  else
+  if ( yyparse() != 0 )
     printf("Rejected!\n");
 
 //lexical_analyzer ();

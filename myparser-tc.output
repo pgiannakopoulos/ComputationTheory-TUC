@@ -1,3 +1,6 @@
+State 180 conflicts: 5 reduce/reduce
+
+
 Grammar
 
     0 $accept: program $end
@@ -101,12 +104,13 @@ Grammar
    73       | KW_RETURN ';'
    74       | %empty
 
-   75 if_command: KW_IF expr KW_THEN body if_rest KW_FI ';'
+   75 if_command: KW_IF expr KW_THEN body if_rest
 
-   76 if_rest: KW_ELSE body
-   77        | %empty
+   76 if_rest: KW_ELSE body KW_FI ';'
+   77        | KW_ELSE KW_IF expr KW_THEN body if_rest
+   78        | KW_FI ';'
 
-   78 while_command: KW_WHILE expr KW_LOOP body KW_POOL ';'
+   79 while_command: KW_WHILE expr KW_LOOP body KW_POOL ';'
 
 
 Terminals, with rules where they appear
@@ -121,7 +125,7 @@ $end (0) 0
 '-' (45) 32 39
 '/' (47) 41
 ':' (58) 1 2 8 14 51 52 53 54 57
-';' (59) 8 14 51 52 53 54 61 62 72 73 75 78
+';' (59) 8 14 51 52 53 54 61 62 72 73 76 78 79
 '[' (91) 21 22
 ']' (93) 21 22
 '{' (123) 1 2 51 52 53 54
@@ -133,13 +137,13 @@ KW_STRING (260) 26
 KW_TRUE (261) 47
 KW_FALSE (262) 48
 KW_BOOL (263) 25
-KW_IF (264) 75
-KW_THEN (265) 75
-KW_ELSE (266) 76
-KW_FI (267) 75
-KW_WHILE (268) 78
-KW_LOOP (269) 78
-KW_POOL (270) 78
+KW_IF (264) 75 77
+KW_THEN (265) 75 77
+KW_ELSE (266) 76 77
+KW_FI (267) 76 78
+KW_WHILE (268) 79
+KW_LOOP (269) 79
+KW_POOL (270) 79
 KW_CONST (271) 1 2 13 51 52 53 54
 KW_LET (272) 7
 KW_RETURN (273) 72 73
@@ -192,7 +196,7 @@ type_spec (60)
 expr (61)
     on left: 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44
     45 46 47 48, on right: 12 32 33 34 35 36 37 38 39 40 41 42 43 44
-    45 46 61 70 72 75 78
+    45 46 61 70 72 75 77 79
 func_decl_list (62)
     on left: 49 50, on right: 1 2 49
 func_decl (63)
@@ -202,7 +206,7 @@ par_decl_list (64)
 par_decl (65)
     on left: 57 58, on right: 55 56
 body (66)
-    on left: 59 60, on right: 1 2 51 54 59 75 76 78
+    on left: 59 60, on right: 1 2 51 54 59 75 76 77 79
 command (67)
     on left: 61 62 63 64, on right: 59 60
 local_decl (68)
@@ -218,9 +222,9 @@ return (72)
 if_command (73)
     on left: 75, on right: 63
 if_rest (74)
-    on left: 76 77, on right: 75
+    on left: 76 77 78, on right: 75 77
 while_command (75)
-    on left: 78, on right: 64
+    on left: 79, on right: 64
 
 
 State 0
@@ -2539,8 +2543,8 @@ State 119
    72 return: . KW_RETURN expr ';'
    73       | . KW_RETURN ';'
    74       | . %empty  ['}']
-   75 if_command: . KW_IF expr KW_THEN body if_rest KW_FI ';'
-   78 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
 
     KW_IF      shift, and go to state 121
     KW_WHILE   shift, and go to state 122
@@ -2579,8 +2583,8 @@ State 120
    65 local_decl: . local_decl var_decl
    66           | . var_decl
    67 func_call: . IDENT '(' param_list ')'
-   75 if_command: . KW_IF expr KW_THEN body if_rest KW_FI ';'
-   78 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
 
     KW_IF     shift, and go to state 121
     KW_WHILE  shift, and go to state 122
@@ -2626,7 +2630,7 @@ State 121
    47     | . KW_TRUE
    48     | . KW_FALSE
    67 func_call: . IDENT '(' param_list ')'
-   75 if_command: KW_IF . expr KW_THEN body if_rest KW_FI ';'
+   75 if_command: KW_IF . expr KW_THEN body if_rest
 
     KW_TRUE   shift, and go to state 47
     KW_FALSE  shift, and go to state 48
@@ -2673,7 +2677,7 @@ State 122
    47     | . KW_TRUE
    48     | . KW_FALSE
    67 func_call: . IDENT '(' param_list ')'
-   78 while_command: KW_WHILE . expr KW_LOOP body KW_POOL ';'
+   79 while_command: KW_WHILE . expr KW_LOOP body KW_POOL ';'
 
     KW_TRUE   shift, and go to state 47
     KW_FALSE  shift, and go to state 48
@@ -2770,8 +2774,8 @@ State 126
    72 return: . KW_RETURN expr ';'
    73       | . KW_RETURN ';'
    74       | . %empty  ['}']
-   75 if_command: . KW_IF expr KW_THEN body if_rest KW_FI ';'
-   78 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
 
     KW_IF      shift, and go to state 121
     KW_WHILE   shift, and go to state 122
@@ -2815,8 +2819,8 @@ State 128
    72 return: . KW_RETURN expr ';'
    73       | . KW_RETURN ';'
    74       | . %empty  ['}']
-   75 if_command: . KW_IF expr KW_THEN body if_rest KW_FI ';'
-   78 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
 
     KW_IF      shift, and go to state 121
     KW_WHILE   shift, and go to state 122
@@ -2880,8 +2884,8 @@ State 133
    72 return: . KW_RETURN expr ';'
    73       | . KW_RETURN ';'
    74       | . %empty  ['}']
-   75 if_command: . KW_IF expr KW_THEN body if_rest KW_FI ';'
-   78 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
 
     KW_IF      shift, and go to state 121
     KW_WHILE   shift, and go to state 122
@@ -2914,8 +2918,8 @@ State 134
    64        | . while_command
    65 local_decl: local_decl . var_decl
    67 func_call: . IDENT '(' param_list ')'
-   75 if_command: . KW_IF expr KW_THEN body if_rest KW_FI ';'
-   78 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
 
     KW_IF     shift, and go to state 121
     KW_WHILE  shift, and go to state 122
@@ -2945,7 +2949,7 @@ State 135
    44     | expr . TK_OP_BIGEQ expr
    45     | expr . TK_OP_NOTEQ expr
    46     | expr . TK_OP_EQ expr
-   75 if_command: KW_IF expr . KW_THEN body if_rest KW_FI ';'
+   75 if_command: KW_IF expr . KW_THEN body if_rest
 
     KW_THEN       shift, and go to state 149
     KW_AND        shift, and go to state 71
@@ -2974,7 +2978,7 @@ State 136
    44     | expr . TK_OP_BIGEQ expr
    45     | expr . TK_OP_NOTEQ expr
    46     | expr . TK_OP_EQ expr
-   78 while_command: KW_WHILE expr . KW_LOOP body KW_POOL ';'
+   79 while_command: KW_WHILE expr . KW_LOOP body KW_POOL ';'
 
     KW_LOOP       shift, and go to state 150
     KW_AND        shift, and go to state 71
@@ -3109,8 +3113,8 @@ State 143
    72 return: . KW_RETURN expr ';'
    73       | . KW_RETURN ';'
    74       | . %empty  ['}']
-   75 if_command: . KW_IF expr KW_THEN body if_rest KW_FI ';'
-   78 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
 
     KW_IF      shift, and go to state 121
     KW_WHILE   shift, and go to state 122
@@ -3171,8 +3175,8 @@ State 148
    72 return: . KW_RETURN expr ';'
    73       | . KW_RETURN ';'
    74       | . %empty  ['}']
-   75 if_command: . KW_IF expr KW_THEN body if_rest KW_FI ';'
-   78 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
 
     KW_IF      shift, and go to state 121
     KW_WHILE   shift, and go to state 122
@@ -3202,9 +3206,9 @@ State 149
    63        | . if_command
    64        | . while_command
    67 func_call: . IDENT '(' param_list ')'
-   75 if_command: . KW_IF expr KW_THEN body if_rest KW_FI ';'
-   75           | KW_IF expr KW_THEN . body if_rest KW_FI ';'
-   78 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   75           | KW_IF expr KW_THEN . body if_rest
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
 
     KW_IF     shift, and go to state 121
     KW_WHILE  shift, and go to state 122
@@ -3231,9 +3235,9 @@ State 150
    63        | . if_command
    64        | . while_command
    67 func_call: . IDENT '(' param_list ')'
-   75 if_command: . KW_IF expr KW_THEN body if_rest KW_FI ';'
-   78 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
-   78              | KW_WHILE expr KW_LOOP . body KW_POOL ';'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+   79              | KW_WHILE expr KW_LOOP . body KW_POOL ';'
 
     KW_IF     shift, and go to state 121
     KW_WHILE  shift, and go to state 122
@@ -3337,25 +3341,25 @@ State 159
    63        | . if_command
    64        | . while_command
    67 func_call: . IDENT '(' param_list ')'
-   75 if_command: . KW_IF expr KW_THEN body if_rest KW_FI ';'
-   75           | KW_IF expr KW_THEN body . if_rest KW_FI ';'
-   76 if_rest: . KW_ELSE body
-   77        | . %empty  [KW_FI]
-   78 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   75           | KW_IF expr KW_THEN body . if_rest
+   76 if_rest: . KW_ELSE body KW_FI ';'
+   77        | . KW_ELSE KW_IF expr KW_THEN body if_rest
+   78        | . KW_FI ';'
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
 
     KW_IF     shift, and go to state 121
     KW_ELSE   shift, and go to state 166
+    KW_FI     shift, and go to state 167
     KW_WHILE  shift, and go to state 122
     IDENT     shift, and go to state 51
     '['       shift, and go to state 9
-
-    $default  reduce using rule 77 (if_rest)
 
     decl_id        go to state 125
     command        go to state 140
     func_call      go to state 129
     if_command     go to state 131
-    if_rest        go to state 167
+    if_rest        go to state 168
     while_command  go to state 132
 
 
@@ -3370,13 +3374,13 @@ State 160
    63        | . if_command
    64        | . while_command
    67 func_call: . IDENT '(' param_list ')'
-   75 if_command: . KW_IF expr KW_THEN body if_rest KW_FI ';'
-   78 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
-   78              | KW_WHILE expr KW_LOOP body . KW_POOL ';'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+   79              | KW_WHILE expr KW_LOOP body . KW_POOL ';'
 
     KW_IF     shift, and go to state 121
     KW_WHILE  shift, and go to state 122
-    KW_POOL   shift, and go to state 168
+    KW_POOL   shift, and go to state 169
     IDENT     shift, and go to state 51
     '['       shift, and go to state 9
 
@@ -3405,7 +3409,7 @@ State 163
 
    51 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}' . ';'
 
-    ';'  shift, and go to state 169
+    ';'  shift, and go to state 170
 
 
 State 164
@@ -3434,17 +3438,18 @@ State 166
    63        | . if_command
    64        | . while_command
    67 func_call: . IDENT '(' param_list ')'
-   75 if_command: . KW_IF expr KW_THEN body if_rest KW_FI ';'
-   76 if_rest: KW_ELSE . body
-   78 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   76 if_rest: KW_ELSE . body KW_FI ';'
+   77        | KW_ELSE . KW_IF expr KW_THEN body if_rest
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
 
-    KW_IF     shift, and go to state 121
+    KW_IF     shift, and go to state 171
     KW_WHILE  shift, and go to state 122
     IDENT     shift, and go to state 51
     '['       shift, and go to state 9
 
     decl_id        go to state 125
-    body           go to state 170
+    body           go to state 172
     command        go to state 127
     func_call      go to state 129
     if_command     go to state 131
@@ -3453,26 +3458,81 @@ State 166
 
 State 167
 
-   75 if_command: KW_IF expr KW_THEN body if_rest . KW_FI ';'
+   78 if_rest: KW_FI . ';'
 
-    KW_FI  shift, and go to state 171
+    ';'  shift, and go to state 173
 
 
 State 168
 
-   78 while_command: KW_WHILE expr KW_LOOP body KW_POOL . ';'
+   75 if_command: KW_IF expr KW_THEN body if_rest .
 
-    ';'  shift, and go to state 172
+    $default  reduce using rule 75 (if_command)
 
 
 State 169
+
+   79 while_command: KW_WHILE expr KW_LOOP body KW_POOL . ';'
+
+    ';'  shift, and go to state 174
+
+
+State 170
 
    51 func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}' ';' .
 
     $default  reduce using rule 51 (func_decl)
 
 
-State 170
+State 171
+
+   20 decl_id: . IDENT
+   21        | . '[' ']' IDENT
+   22        | . IDENT '[' POSINT ']'
+   27 expr: . POSINT
+   28     | . REAL
+   29     | . STRING
+   30     | . decl_id
+   31     | . func_call
+   32     | . '-' expr
+   33     | . '+' expr
+   34     | . KW_NOT expr
+   35     | . expr KW_OR expr
+   36     | . expr KW_AND expr
+   37     | . '(' expr ')'
+   38     | . expr '+' expr
+   39     | . expr '-' expr
+   40     | . expr '*' expr
+   41     | . expr '/' expr
+   42     | . expr '%' expr
+   43     | . expr TK_OP_BIGGER expr
+   44     | . expr TK_OP_BIGEQ expr
+   45     | . expr TK_OP_NOTEQ expr
+   46     | . expr TK_OP_EQ expr
+   47     | . KW_TRUE
+   48     | . KW_FALSE
+   67 func_call: . IDENT '(' param_list ')'
+   75 if_command: KW_IF . expr KW_THEN body if_rest
+   77 if_rest: KW_ELSE KW_IF . expr KW_THEN body if_rest
+
+    KW_TRUE   shift, and go to state 47
+    KW_FALSE  shift, and go to state 48
+    KW_NOT    shift, and go to state 49
+    STRING    shift, and go to state 50
+    IDENT     shift, and go to state 51
+    POSINT    shift, and go to state 52
+    REAL      shift, and go to state 53
+    '+'       shift, and go to state 54
+    '-'       shift, and go to state 55
+    '('       shift, and go to state 56
+    '['       shift, and go to state 9
+
+    decl_id    go to state 57
+    expr       go to state 175
+    func_call  go to state 59
+
+
+State 172
 
    20 decl_id: . IDENT
    21        | . '[' ']' IDENT
@@ -3483,16 +3543,15 @@ State 170
    63        | . if_command
    64        | . while_command
    67 func_call: . IDENT '(' param_list ')'
-   75 if_command: . KW_IF expr KW_THEN body if_rest KW_FI ';'
-   76 if_rest: KW_ELSE body .  [KW_FI]
-   78 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   76 if_rest: KW_ELSE body . KW_FI ';'
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
 
     KW_IF     shift, and go to state 121
+    KW_FI     shift, and go to state 176
     KW_WHILE  shift, and go to state 122
     IDENT     shift, and go to state 51
     '['       shift, and go to state 9
-
-    $default  reduce using rule 76 (if_rest)
 
     decl_id        go to state 125
     command        go to state 140
@@ -3501,22 +3560,145 @@ State 170
     while_command  go to state 132
 
 
-State 171
-
-   75 if_command: KW_IF expr KW_THEN body if_rest KW_FI . ';'
-
-    ';'  shift, and go to state 173
-
-
-State 172
-
-   78 while_command: KW_WHILE expr KW_LOOP body KW_POOL ';' .
-
-    $default  reduce using rule 78 (while_command)
-
-
 State 173
 
-   75 if_command: KW_IF expr KW_THEN body if_rest KW_FI ';' .
+   78 if_rest: KW_FI ';' .
 
-    $default  reduce using rule 75 (if_command)
+    $default  reduce using rule 78 (if_rest)
+
+
+State 174
+
+   79 while_command: KW_WHILE expr KW_LOOP body KW_POOL ';' .
+
+    $default  reduce using rule 79 (while_command)
+
+
+State 175
+
+   35 expr: expr . KW_OR expr
+   36     | expr . KW_AND expr
+   38     | expr . '+' expr
+   39     | expr . '-' expr
+   40     | expr . '*' expr
+   41     | expr . '/' expr
+   42     | expr . '%' expr
+   43     | expr . TK_OP_BIGGER expr
+   44     | expr . TK_OP_BIGEQ expr
+   45     | expr . TK_OP_NOTEQ expr
+   46     | expr . TK_OP_EQ expr
+   75 if_command: KW_IF expr . KW_THEN body if_rest
+   77 if_rest: KW_ELSE KW_IF expr . KW_THEN body if_rest
+
+    KW_THEN       shift, and go to state 177
+    KW_AND        shift, and go to state 71
+    KW_OR         shift, and go to state 72
+    TK_OP_EQ      shift, and go to state 73
+    TK_OP_BIGGER  shift, and go to state 74
+    TK_OP_BIGEQ   shift, and go to state 75
+    TK_OP_NOTEQ   shift, and go to state 76
+    '+'           shift, and go to state 77
+    '-'           shift, and go to state 78
+    '*'           shift, and go to state 79
+    '/'           shift, and go to state 80
+    '%'           shift, and go to state 81
+
+
+State 176
+
+   76 if_rest: KW_ELSE body KW_FI . ';'
+
+    ';'  shift, and go to state 178
+
+
+State 177
+
+   20 decl_id: . IDENT
+   21        | . '[' ']' IDENT
+   22        | . IDENT '[' POSINT ']'
+   59 body: . body command
+   60     | . command
+   61 command: . decl_id ASSIGN expr ';'
+   62        | . func_call ';'
+   63        | . if_command
+   64        | . while_command
+   67 func_call: . IDENT '(' param_list ')'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   75           | KW_IF expr KW_THEN . body if_rest
+   77 if_rest: KW_ELSE KW_IF expr KW_THEN . body if_rest
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+
+    KW_IF     shift, and go to state 121
+    KW_WHILE  shift, and go to state 122
+    IDENT     shift, and go to state 51
+    '['       shift, and go to state 9
+
+    decl_id        go to state 125
+    body           go to state 179
+    command        go to state 127
+    func_call      go to state 129
+    if_command     go to state 131
+    while_command  go to state 132
+
+
+State 178
+
+   76 if_rest: KW_ELSE body KW_FI ';' .
+
+    $default  reduce using rule 76 (if_rest)
+
+
+State 179
+
+   20 decl_id: . IDENT
+   21        | . '[' ']' IDENT
+   22        | . IDENT '[' POSINT ']'
+   59 body: body . command
+   61 command: . decl_id ASSIGN expr ';'
+   62        | . func_call ';'
+   63        | . if_command
+   64        | . while_command
+   67 func_call: . IDENT '(' param_list ')'
+   75 if_command: . KW_IF expr KW_THEN body if_rest
+   75           | KW_IF expr KW_THEN body . if_rest
+   76 if_rest: . KW_ELSE body KW_FI ';'
+   77        | . KW_ELSE KW_IF expr KW_THEN body if_rest
+   77        | KW_ELSE KW_IF expr KW_THEN body . if_rest
+   78        | . KW_FI ';'
+   79 while_command: . KW_WHILE expr KW_LOOP body KW_POOL ';'
+
+    KW_IF     shift, and go to state 121
+    KW_ELSE   shift, and go to state 166
+    KW_FI     shift, and go to state 167
+    KW_WHILE  shift, and go to state 122
+    IDENT     shift, and go to state 51
+    '['       shift, and go to state 9
+
+    decl_id        go to state 125
+    command        go to state 140
+    func_call      go to state 129
+    if_command     go to state 131
+    if_rest        go to state 180
+    while_command  go to state 132
+
+
+State 180
+
+   75 if_command: KW_IF expr KW_THEN body if_rest .  [KW_IF, KW_FI, KW_WHILE, IDENT, '[']
+   77 if_rest: KW_ELSE KW_IF expr KW_THEN body if_rest .  [KW_IF, KW_ELSE, KW_FI, KW_WHILE, KW_POOL, KW_RETURN, IDENT, '}', '[']
+
+    KW_IF      reduce using rule 75 (if_command)
+    KW_IF      [reduce using rule 77 (if_rest)]
+    KW_ELSE    reduce using rule 77 (if_rest)
+    KW_FI      reduce using rule 75 (if_command)
+    KW_FI      [reduce using rule 77 (if_rest)]
+    KW_WHILE   reduce using rule 75 (if_command)
+    KW_WHILE   [reduce using rule 77 (if_rest)]
+    KW_POOL    reduce using rule 77 (if_rest)
+    KW_RETURN  reduce using rule 77 (if_rest)
+    IDENT      reduce using rule 75 (if_command)
+    IDENT      [reduce using rule 77 (if_rest)]
+    '}'        reduce using rule 77 (if_rest)
+    '['        reduce using rule 75 (if_command)
+    '['        [reduce using rule 77 (if_rest)]
+    $default   reduce using rule 75 (if_command)

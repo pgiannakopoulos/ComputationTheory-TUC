@@ -10,4 +10,11 @@ comp: lex.yy.c myparser-tc.tab.c myparser-tc.tab.h
 	gcc -o mycomp myparser-tc.tab.c lex.yy.c cgen.c -lfl
 
 clean:
-	rm mycomp myparser-tc.tab.c lex.yy.c myparser-tc.tab.hz
+	rm mycomp myparser-tc.tab.c lex.yy.c myparser-tc.tab.h
+
+test:
+	./mycomp < inputs/protoi.tc > myTestProg.c
+	gcc -o mytest -std=c99 -Wall myTestProg.c
+
+clean_test:
+	rm mytest myTestProg.c
