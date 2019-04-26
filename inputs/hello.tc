@@ -1,19 +1,30 @@
 (* My first TeaC program. File: myprog.tc*)
 
-let x <- 0, [] y, z[90] : int;
-let temp : bool;
-let h : real;
-const message <- "sfdf" : string;
+let x1 <- 0, [] y, z[90] : int;
+let temp  <- false : bool;
+let h <- 0.50, As45 <- 0.420E+2 : real;
+const message1 <- "sfdf 50", message2 <- "/nsfdf" : string;
+const hi <- 78 : int;
 
+--My first function
 const [] test <- (x : int) : int => {
 let local : real;
 local <- 5 + 2;
-local <- i*i*i;
+};
+
+const [] empty <- (x : int) : int => {
+x1 <- -a;
+x1 <- a + b * (b / a);
+x1 <- 4 + 50.0*x / 2.45;
+x1 <- (a+1) % cube(b+3);a
+x1 <- (a <= b) and (d <= c);
+x1 <- a + (c != d);
+x1 <- a + b*[(k+1)*2];
 };
 
 const start <- (): int => {
 let x: int;
 x <- 1 + 2 + 3 +4;
 writeInt(x);
-return ;
+return 0;
 }

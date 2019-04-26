@@ -61,14 +61,16 @@
 %type <crepr> func_call param param_list local_decl
 %type <crepr> if_command if_rest while_command 
 
+
+//PRIORITIES
 %precedence KW_THEN
 %precedence KW_ELSE
 
-%left KW_NOT
+%left KW_AND KW_OR
+%left TK_OP_EQ TK_OP_NOTEQ TK_OP_BIGGER TK_OP_BIGEQ
 %left '+' '-'
 %left '*' '/' '%'
-%left TK_OP_EQ TK_OP_NOTEQ TK_OP_BIGGER TK_OP_BIGEQ
-%left KW_AND KW_OR
+%right KW_NOT
 
 %%
 
@@ -121,7 +123,7 @@ let_decl_list: let_decl_list ',' let_decl_init { $$ = template("%s, %s", $1, $3 
 ;
 
 let_decl_init: decl_id { $$ = $1; }
-| decl_id ASSIGN expr { $$ = template("%s = %s;", $1, $3); 
+| decl_id ASSIGN expr { $$ = template("%s = %s", $1, $3); 
 }
 ;
 
@@ -167,11 +169,12 @@ expr:
 | expr KW_OR expr { $$ = template("%s || %s", $1, $3); }
 | expr KW_AND expr { $$ = template("%s && %s", $1, $3); }
 | '(' expr ')' { $$ = template("(%s)", $2); }
+| '[' expr ']' { $$ = template("[%s]", $2); }
 | expr '+' expr { $$ = template("%s + %s", $1, $3); }
 | expr '-' expr { $$ = template("%s - %s", $1, $3); }
 | expr '*' expr { $$ = template("%s * %s", $1, $3); }
 | expr '/' expr { $$ = template("%s / %s", $1, $3); }
-| expr '%' expr { $$ = template("%s mod %s", $1, $3); }
+| expr '%' expr { $$ = template("%s %c %s", $1, '%', $3); }
 | expr TK_OP_BIGGER expr { $$ = template("%s < %s", $1, $3); }
 | expr TK_OP_BIGEQ expr { $$ = template("%s <= %s", $1, $3); }
 | expr TK_OP_NOTEQ expr { $$ = template("%s != %s", $1, $3); }
