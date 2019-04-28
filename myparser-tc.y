@@ -5,6 +5,8 @@
   #include <string.h>   
   #include "cgen.h"
 
+  int lexical_mode = 0;
+  void lexical_analyzer();
   extern int yylex(void);
   extern int line_num;
 %}
@@ -63,8 +65,9 @@
 
 
 //PRIORITIES
-%precedence KW_THEN
 %precedence KW_ELSE
+%precedence KW_THEN
+
 
 %left KW_AND KW_OR
 %left TK_OP_EQ TK_OP_NOTEQ TK_OP_BIGGER TK_OP_BIGEQ
@@ -252,10 +255,10 @@ while_command: KW_WHILE expr KW_LOOP body KW_POOL ';' { $$ = template("while (%s
 
 %%
 int main () {
-
-  if ( yyparse() != 0 )
-    printf("Rejected!\n");
-
-//lexical_analyzer ();
-
+  if (lexical_mode == 0){
+    if ( yyparse() != 0 )
+      printf("\nRejected!\n");
+  }else{
+    lexical_analyzer ();
+  }
 }

@@ -12,11 +12,11 @@ let local : real;
 local <- 5 + 2;
 };
 
-const [] empty <- (x : int) : int => {
+const [] empty <- (x : int) : int => 
 x1 <- -a;
 x1 <- a + b * (b / a);
 x1 <- 4 + 50.0*x / 2.45;
-x1 <- (a+1) % cube(b+3);a
+x1 <- (a+1) % cube(b+3);
 x1 <- (a <= b) and (d <= c);
 x1 <- a + (c != d);
 x1 <- a + b*[(k+1)*2];

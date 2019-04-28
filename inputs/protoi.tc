@@ -39,5 +39,6 @@ const start <- ():int => {
 	pool;
 writeString("\n");
 writeInt(counter);
+writeString("\n");
 return 0;
 }

@@ -6,12 +6,11 @@
   #include  "myparser-tc.tab.h"
   
   int line_num = 1;
-  int lexical_analyzer ();
-
+  int error_counter = 0;
 
   const char * print_line();
   char str[100];
-  char line[256];
+  char line[256] = "Empty line";
 %}
 
 
@@ -101,7 +100,8 @@ start    return KW_START;
 
 <<EOF>> 		return EOF;
 
-.           { yyerror("lexical error: unrecognized literal %s in line %d \n", yytext, line_num); }
+.           { error_counter++;
+			  yyerror("lexical error: unrecognized token < %s >", yytext); }
 
 %%
 
@@ -248,13 +248,20 @@ int lexical_analyzer ()
 	int token;
 	while ( (token = yylex()) != EOF )
 		printf("Token %s: %s\n", token_recognizer(token), yytext);
+
+	if (error_counter == 0){
+		printf("\nYour program is lexically correct!\n");
+	}else{
+		printf("\n%d errors found!\n", error_counter);
+	}
 }
 
 const char * print_line(){
 	int count = 1;
 
 	while (fgets(line, sizeof(line), yyin) != NULL){
-        if (count == line_num-1){   
+		//line[strlen(line) - 1] = '\0';
+        if (count == 1){  
         	break;
         }     
         count++;   
