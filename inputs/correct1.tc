@@ -1,0 +1,64 @@
+--test
+
+const SIZE <- 10 : int;
+
+const fibo <- (n: int): int => {
+	let i <- 1, t1 <- 0, t2 <- 1, nextTerm : int;
+    writeString("Fibonacci Series: ");
+
+    while i <= n loop
+    	writeInt(t1);
+    	writeString(", ");
+        nextTerm <- t1 + t2;
+        t1 <- t2;
+        t2 <- nextTerm;
+        i <- i + 1;
+    pool;
+    writeString("\n");
+
+    return 0;
+};
+
+const get_array <- ([] a : int, size : int) : int => {
+  let i<-0 : int;
+  writeString("Enter 10 values, after each value press enter:\n" );
+
+  while i < size loop
+  	a[i] <- readInt();
+  	i <- i + 1;
+  pool;
+
+  return 0;
+};
+
+const prt_array <- ([] a : int, size : int) : int => {
+	let i <- 0 :int;
+    writeString("Printing all values:");
+    while i < size loop
+    	writeString("\n");
+    	writeInt(a[i]);
+    	i <- i + 1;
+  	pool;
+
+  return 0;
+};
+
+const start <- (): int => {
+	let n : int;
+	let a[SIZE] : int;
+  	
+  	--fibonacci example
+	writeString("Enter the number of terms: ");
+    n <- readInt();
+    fibo(n);
+
+    --array access example
+    writeString("\n");
+    get_array(a, SIZE);
+    writeString("\n");
+    writeString("\n");
+  	prt_array(a, SIZE);
+  	writeString("\n");
+
+    return 0;
+}

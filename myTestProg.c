@@ -48,6 +48,7 @@ number = number + 1;
 };
 writeString("\n");
 writeInt(counter);
+writeString("\n");
 return 0;
 } 
 

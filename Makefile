@@ -14,7 +14,11 @@ clean:
 
 test:
 	./mycomp < inputs/protoi.tc > myTestProg.c
-	gcc -o mytest -std=c99 -Wall myTestProg.c
+	gcc -o mytest1 -std=c99 -Wall myTestProg.c
+	./mycomp < inputs/correct1.tc > correct1.c
+	gcc -o mytest2 -std=c99 -Wall correct1.c
+	./mycomp < inputs/correct2.tc > correct2.c
+	gcc -o mytest3 -std=c99 -Wall correct2.c
 
 clean_test:
-	rm mytest myTestProg.c
+	rm mytest1 mytest2 mytest3 myTestProg.c correct1.c correct2.c

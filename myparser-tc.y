@@ -152,6 +152,7 @@ decl_id ASSIGN STRING { $$ = template("%s = %s", $1, $3); }
 decl_id: IDENT { $$ = $1; } 
 | '[' ']' IDENT { $$ = template("*%s", $3); }
 | IDENT '[' POSINT ']' { $$ = template("%s[%s]", $1, $3); }
+| IDENT '[' decl_id ']' { $$ = template("%s[%s]", $1, $3); }
 ;
 
 type_spec:  KW_INT { $$ = "int"; }
@@ -205,9 +206,10 @@ par_decl_list: par_decl_list ',' par_decl { $$ = template("%s, %s", $1, $3 );}
 | par_decl { $$ = template("%s",$1);}
 ;
 
-par_decl: decl_id ':' type_spec {  $$ = template("%s %s", $3, $1);  }
+par_decl: par_decl ':' type_spec {  $$ = template("%s %s", $3, $1);  }
 | %empty { $$=" ";}
 ;
+
 
 //BODY
 body: body command { $$ = template("%s\n%s", $1, $2); }
