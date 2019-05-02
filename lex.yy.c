@@ -574,8 +574,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "ct_p1.l"
-#line 2 "ct_p1.l"
+#line 1 "mylexer-tc.l"
+#line 2 "mylexer-tc.l"
   #include <stdio.h>
   #include <string.h>  
 
@@ -583,15 +583,14 @@ char *yytext;
   #include  "myparser-tc.tab.h"
   
   int line_num = 1;
-  int lexical_analyzer ();
-
+  int error_counter = 0;
 
   const char * print_line();
   char str[100];
-  char line[256];
-#line 593 "lex.yy.c"
+  char line[256] = "Empty line";
+#line 592 "lex.yy.c"
  
-#line 595 "lex.yy.c"
+#line 594 "lex.yy.c"
 
 #define INITIAL 0
 #define comment 1
@@ -809,10 +808,10 @@ YY_DECL
 		}
 
 	{
-#line 27 "ct_p1.l"
+#line 26 "mylexer-tc.l"
 
 
-#line 816 "lex.yy.c"
+#line 815 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -871,325 +870,326 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 29 "ct_p1.l"
+#line 28 "mylexer-tc.l"
 
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 30 "ct_p1.l"
+#line 29 "mylexer-tc.l"
 return KW_INT; 
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 31 "ct_p1.l"
+#line 30 "mylexer-tc.l"
 return KW_FALSE;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 32 "ct_p1.l"
+#line 31 "mylexer-tc.l"
 return KW_LOOP; 
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 33 "ct_p1.l"
+#line 32 "mylexer-tc.l"
 return KW_RETURN; 
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 34 "ct_p1.l"
+#line 33 "mylexer-tc.l"
 return KW_REAL; 
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 35 "ct_p1.l"
+#line 34 "mylexer-tc.l"
 return KW_IF; 
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 36 "ct_p1.l"
+#line 35 "mylexer-tc.l"
 return KW_POOL; 
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 37 "ct_p1.l"
+#line 36 "mylexer-tc.l"
 return KW_NOT; 
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 38 "ct_p1.l"
+#line 37 "mylexer-tc.l"
 return KW_BOOL; 
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 39 "ct_p1.l"
+#line 38 "mylexer-tc.l"
 return KW_ELSE; 
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 40 "ct_p1.l"
+#line 39 "mylexer-tc.l"
 return KW_CONST; 
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 41 "ct_p1.l"
+#line 40 "mylexer-tc.l"
 return KW_AND; 
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 42 "ct_p1.l"
+#line 41 "mylexer-tc.l"
 return KW_STRING; 
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 43 "ct_p1.l"
+#line 42 "mylexer-tc.l"
 return KW_FI; 
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 44 "ct_p1.l"
+#line 43 "mylexer-tc.l"
 return KW_LET; 
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 45 "ct_p1.l"
+#line 44 "mylexer-tc.l"
 return KW_OR; 
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 46 "ct_p1.l"
+#line 45 "mylexer-tc.l"
 return KW_TRUE; 
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 47 "ct_p1.l"
+#line 46 "mylexer-tc.l"
 return KW_WHILE; 
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 48 "ct_p1.l"
+#line 47 "mylexer-tc.l"
 return KW_THEN; 
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 49 "ct_p1.l"
+#line 48 "mylexer-tc.l"
 return KW_START; 
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 51 "ct_p1.l"
+#line 50 "mylexer-tc.l"
 
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 52 "ct_p1.l"
+#line 51 "mylexer-tc.l"
 { yylval.crepr = strdup(yytext); return IDENT; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 54 "ct_p1.l"
+#line 53 "mylexer-tc.l"
 
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 55 "ct_p1.l"
+#line 54 "mylexer-tc.l"
 { yylval.crepr = strdup(yytext); return POSINT; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 57 "ct_p1.l"
+#line 56 "mylexer-tc.l"
 
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 58 "ct_p1.l"
+#line 57 "mylexer-tc.l"
 { yylval.crepr = strdup(yytext); return REAL; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 60 "ct_p1.l"
+#line 59 "mylexer-tc.l"
 
 	YY_BREAK
 case 29:
 /* rule 29 can match eol */
 YY_RULE_SETUP
-#line 61 "ct_p1.l"
+#line 60 "mylexer-tc.l"
 {yylval.crepr = strdup(yytext); return STRING; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 63 "ct_p1.l"
+#line 62 "mylexer-tc.l"
 
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 64 "ct_p1.l"
+#line 63 "mylexer-tc.l"
 return '+'; 
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 65 "ct_p1.l"
+#line 64 "mylexer-tc.l"
 return '-'; 
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 66 "ct_p1.l"
+#line 65 "mylexer-tc.l"
 return '*'; 
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 67 "ct_p1.l"
+#line 66 "mylexer-tc.l"
 return '/'; 
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 68 "ct_p1.l"
+#line 67 "mylexer-tc.l"
 return '%'; 
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 69 "ct_p1.l"
+#line 68 "mylexer-tc.l"
 return TK_OP_EQ; 
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 70 "ct_p1.l"
+#line 69 "mylexer-tc.l"
 return TK_OP_BIGGER; 
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 71 "ct_p1.l"
+#line 70 "mylexer-tc.l"
 return TK_OP_BIGEQ; 
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 72 "ct_p1.l"
+#line 71 "mylexer-tc.l"
 return TK_OP_NOTEQ;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 73 "ct_p1.l"
+#line 72 "mylexer-tc.l"
 return ASSIGN;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 74 "ct_p1.l"
+#line 73 "mylexer-tc.l"
 return ARROW; 
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 76 "ct_p1.l"
+#line 75 "mylexer-tc.l"
 
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 77 "ct_p1.l"
+#line 76 "mylexer-tc.l"
 return ';'; 
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 78 "ct_p1.l"
+#line 77 "mylexer-tc.l"
 return '('; 
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 79 "ct_p1.l"
+#line 78 "mylexer-tc.l"
 return ')'; 
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 80 "ct_p1.l"
+#line 79 "mylexer-tc.l"
 return ','; 
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 81 "ct_p1.l"
+#line 80 "mylexer-tc.l"
 return '['; 
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 82 "ct_p1.l"
+#line 81 "mylexer-tc.l"
 return ']'; 
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 83 "ct_p1.l"
+#line 82 "mylexer-tc.l"
 return ':'; 
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 84 "ct_p1.l"
+#line 83 "mylexer-tc.l"
 return '{';
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 85 "ct_p1.l"
+#line 84 "mylexer-tc.l"
 return '}';
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 88 "ct_p1.l"
+#line 87 "mylexer-tc.l"
 
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 89 "ct_p1.l"
+#line 88 "mylexer-tc.l"
 /* eat whitespace */
 	YY_BREAK
 case 54:
 /* rule 54 can match eol */
 YY_RULE_SETUP
-#line 90 "ct_p1.l"
+#line 89 "mylexer-tc.l"
 ++line_num;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 92 "ct_p1.l"
+#line 91 "mylexer-tc.l"
 
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 93 "ct_p1.l"
+#line 92 "mylexer-tc.l"
 /* eat line comments */
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 95 "ct_p1.l"
+#line 94 "mylexer-tc.l"
 { BEGIN(comment); printf("comment started at line: %d\n", line_num); }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 97 "ct_p1.l"
+#line 96 "mylexer-tc.l"
 /* eat anything that's not a '*' */
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 98 "ct_p1.l"
+#line 97 "mylexer-tc.l"
 /* eat up '*'s not followed by '/'s */
 	YY_BREAK
 case 60:
 /* rule 60 can match eol */
 YY_RULE_SETUP
-#line 99 "ct_p1.l"
+#line 98 "mylexer-tc.l"
 ++line_num;
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 100 "ct_p1.l"
+#line 99 "mylexer-tc.l"
 { BEGIN(INITIAL); printf("comment ended at line: %d\n", line_num); }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(comment):
-#line 102 "ct_p1.l"
+#line 101 "mylexer-tc.l"
 return EOF;
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 104 "ct_p1.l"
-{ yyerror("lexical error: unrecognized literal %s in line %d \n", yytext, line_num); }
+#line 103 "mylexer-tc.l"
+{ error_counter++;
+			  yyerror("lexical error: unrecognized token < %s >", yytext); }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 106 "ct_p1.l"
+#line 106 "mylexer-tc.l"
 ECHO;
 	YY_BREAK
 #line 1196 "lex.yy.c"
@@ -2195,7 +2195,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 106 "ct_p1.l"
+#line 106 "mylexer-tc.l"
 
 
 const char * token_recognizer(int token){
@@ -2341,13 +2341,20 @@ int lexical_analyzer ()
 	int token;
 	while ( (token = yylex()) != EOF )
 		printf("Token %s: %s\n", token_recognizer(token), yytext);
+
+	if (error_counter == 0){
+		printf("\nYour program is lexically correct!\n");
+	}else{
+		printf("\n%d errors found!\n", error_counter);
+	}
 }
 
 const char * print_line(){
 	int count = 1;
 
 	while (fgets(line, sizeof(line), yyin) != NULL){
-        if (count == line_num-1){   
+		//line[strlen(line) - 1] = '\0';
+        if (count == 1){  
         	break;
         }     
         count++;   

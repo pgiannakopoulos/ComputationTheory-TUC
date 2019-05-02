@@ -245,7 +245,6 @@ if_command: KW_IF expr KW_THEN body if_rest { $$ = template("if (%s) {\n%s%s", $
 ;
 
 if_rest: KW_ELSE body KW_FI ';'{ $$ = template("\n}else{\n%s\n}", $2); }
-| KW_ELSE KW_IF expr KW_THEN body if_rest{ $$ = template("\n}else if (%s) {\n%s%s", $3, $5, $6); }
 | KW_FI ';' { $$="\n};";}  
 ;
 
