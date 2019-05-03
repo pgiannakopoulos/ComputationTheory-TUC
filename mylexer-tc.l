@@ -91,12 +91,12 @@ start    return KW_START;
 --comments
 "--"[^\n]*  		    /* eat line comments */
 
-"\(*"                    { BEGIN(comment); printf("comment started at line: %d\n", line_num); }
+"\(*"                    { BEGIN(comment); /*printf("comment started at line: %d\n", line_num); */ }
 
 <comment>[^*\n]*        /* eat anything that's not a '*' */
 <comment>"*"+[^*\)\n]*   /* eat up '*'s not followed by '/'s */
 <comment>\n             ++line_num;
-<comment>"*"+"\)"        { BEGIN(INITIAL); printf("comment ended at line: %d\n", line_num); }
+<comment>"*"+"\)"        { BEGIN(INITIAL); /*printf("comment ended at line: %d\n", line_num);*/ }
 
 <<EOF>> 		return EOF;
 

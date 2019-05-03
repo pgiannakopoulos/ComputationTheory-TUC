@@ -111,7 +111,7 @@ decl_types : var_decl { $$ = $1; }
 
 //VARIABLES
 global_decl: global_decl decl_types { $$ = template("%s\n%s", $1, $2); }
-| decl_types 
+| decl_types
 ;
 
 // Declare variables to the same line
@@ -206,8 +206,8 @@ par_decl_list: par_decl_list ',' par_decl { $$ = template("%s, %s", $1, $3 );}
 | par_decl { $$ = template("%s",$1);}
 ;
 
-par_decl: par_decl ':' type_spec {  $$ = template("%s %s", $3, $1);  }
-| %empty { $$=" ";}
+par_decl: decl_id ':' type_spec {  $$ = template("%s %s", $3, $1);  }
+| %empty { $$="";}
 ;
 
 
