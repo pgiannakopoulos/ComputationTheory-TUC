@@ -1,0 +1,13 @@
+(* Wrong 2 *)
+
+let x <- 5 : int;
+
+
+const start <- (): int => {
+	while true loop
+		if x > 6 then
+			if y < 7 then
+		fi
+	pool;
+	fi;
+}
