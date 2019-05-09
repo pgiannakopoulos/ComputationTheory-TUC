@@ -6,7 +6,7 @@ let a, b: int;
 
 const cube <- (i: int): int => {
   return i*i*i;
-}    
+};    
    
 const add <- (n: int, k: int): int => {
   let j: int;
@@ -14,7 +14,7 @@ const add <- (n: int, k: int): int => {
   j <- (N-n) + cube(k);
   writeInt(j);
   return j;
-}
+};
 
 (* Here you can see some useless lines.
  * Just for testing the multi-line comments ...

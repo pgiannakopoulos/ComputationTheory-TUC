@@ -77,7 +77,42 @@
 
 %%
 
-program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}' { 
+program: KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}' { 
+/* We have a successful parse! 
+  Check for any errors and generate output. 
+*/
+  if(yyerror_count==0) {
+    // include the teaclib.h file
+    puts(c_prologue); 
+    printf("/* program */ \n\n");
+    printf("int main() {\n%s\n%s\n%s\n} \n\n", $10,$11,$12);
+  }
+}
+| func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}' { 
+/* We have a successful parse! 
+  Check for any errors and generate output. 
+*/
+  if(yyerror_count==0) {
+    // include the teaclib.h file
+    puts(c_prologue); 
+    printf("/* program */ \n\n");
+    printf("%s\n\n", $1);
+    printf("int main() {\n%s\n%s\n%s\n} \n\n", $11,$12,$13);
+  }
+}
+| global_decl KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}' { 
+/* We have a successful parse! 
+  Check for any errors and generate output. 
+*/
+  if(yyerror_count==0) {
+    // include the teaclib.h file
+    puts(c_prologue); 
+    printf("/* program */ \n\n");
+    printf("%s\n\n", $1);
+    printf("int main() {\n%s\n%s\n%s\n} \n\n", $11,$12,$13);
+  }
+}
+| global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}' { 
 /* We have a successful parse! 
   Check for any errors and generate output. 
 */
@@ -90,6 +125,41 @@ program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT 
     printf("int main() {\n%s\n%s\n%s\n} \n\n", $12,$13,$14);
   }
 }
+| KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body return '}' { 
+/* We have a successful parse! 
+  Check for any errors and generate output. 
+*/
+  if(yyerror_count==0) {
+    // include the teaclib.h file
+    puts(c_prologue); 
+    printf("/* program */ \n\n");
+    printf("int main() {\n%s\n%s\n} \n\n", $10,$11);
+  }
+}
+| func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body return '}' { 
+/* We have a successful parse! 
+  Check for any errors and generate output. 
+*/
+  if(yyerror_count==0) {
+    // include the teaclib.h file
+    puts(c_prologue); 
+    printf("/* program */ \n\n");
+    printf("%s\n\n", $1);
+    printf("int main() {\n%s\n%s\n} \n\n", $11,$12);
+  }
+}
+| global_decl KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body return '}' { 
+/* We have a successful parse! 
+  Check for any errors and generate output. 
+*/
+  if(yyerror_count==0) {
+    // include the teaclib.h file
+    puts(c_prologue); 
+    printf("/* program */ \n\n");
+    printf("%s\n\n", $1);
+    printf("int main() {\n%s\n%s\n} \n\n", $11,$12);
+  }
+}
 | global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body return '}' { 
 /* We have a successful parse! 
   Check for any errors and generate output. 
@@ -100,7 +170,7 @@ program: global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT 
     printf("/* program */ \n\n");
     printf("%s\n\n", $1);
     printf("%s\n\n", $2);
-    printf("int main() {\n%s\n%s\n} \n\n",$12,$13);
+    printf("int main() {\n%s\n%s\n} \n", $12,$13);
   }
 }
 ;
@@ -167,8 +237,8 @@ expr:
 | STRING
 | decl_id
 | func_call
-| '-' expr  { $$ = template("-%s", $2); }
-| '+' expr  { $$ = template("+%s", $2); }
+| '-' expr  { $$ = template(" -%s", $2); }
+| '+' expr  { $$ = template(" +%s", $2); }
 | KW_NOT expr { $$ = template("!%s", $2); }
 | expr KW_OR expr { $$ = template("%s || %s", $1, $3); }
 | expr KW_AND expr { $$ = template("%s && %s", $1, $3); }
