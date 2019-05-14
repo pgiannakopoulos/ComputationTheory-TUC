@@ -77,55 +77,7 @@
 
 %%
 
-program: KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}' { 
-/* We have a successful parse! 
-  Check for any errors and generate output. 
-*/
-  if(yyerror_count==0) {
-    // include the teaclib.h file
-    puts(c_prologue); 
-    printf("/* program */ \n\n");
-    printf("int main() {\n%s\n%s\n%s\n} \n\n", $10,$11,$12);
-  }
-}
-| func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}' { 
-/* We have a successful parse! 
-  Check for any errors and generate output. 
-*/
-  if(yyerror_count==0) {
-    // include the teaclib.h file
-    puts(c_prologue); 
-    printf("/* program */ \n\n");
-    printf("%s\n\n", $1);
-    printf("int main() {\n%s\n%s\n%s\n} \n\n", $11,$12,$13);
-  }
-}
-| global_decl KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}' { 
-/* We have a successful parse! 
-  Check for any errors and generate output. 
-*/
-  if(yyerror_count==0) {
-    // include the teaclib.h file
-    puts(c_prologue); 
-    printf("/* program */ \n\n");
-    printf("%s\n\n", $1);
-    printf("int main() {\n%s\n%s\n%s\n} \n\n", $11,$12,$13);
-  }
-}
-| global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body return '}' { 
-/* We have a successful parse! 
-  Check for any errors and generate output. 
-*/
-  if(yyerror_count==0) {
-    // include the teaclib.h file
-    puts(c_prologue); 
-    printf("/* program */ \n\n");
-    printf("%s\n\n", $1);
-    printf("%s\n\n", $2);
-    printf("int main() {\n%s\n%s\n%s\n} \n\n", $12,$13,$14);
-  }
-}
-| KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body return '}' { 
+program: KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body '}' { 
 /* We have a successful parse! 
   Check for any errors and generate output. 
 */
@@ -136,7 +88,7 @@ program: KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body r
     printf("int main() {\n%s\n%s\n} \n\n", $10,$11);
   }
 }
-| func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body return '}' { 
+| func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body '}' { 
 /* We have a successful parse! 
   Check for any errors and generate output. 
 */
@@ -148,7 +100,7 @@ program: KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body r
     printf("int main() {\n%s\n%s\n} \n\n", $11,$12);
   }
 }
-| global_decl KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body return '}' { 
+| global_decl KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body '}' { 
 /* We have a successful parse! 
   Check for any errors and generate output. 
 */
@@ -160,7 +112,7 @@ program: KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body r
     printf("int main() {\n%s\n%s\n} \n\n", $11,$12);
   }
 }
-| global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body return '}' { 
+| global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body '}' { 
 /* We have a successful parse! 
   Check for any errors and generate output. 
 */
@@ -170,7 +122,55 @@ program: KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' local_decl body r
     printf("/* program */ \n\n");
     printf("%s\n\n", $1);
     printf("%s\n\n", $2);
-    printf("int main() {\n%s\n%s\n} \n", $12,$13);
+    printf("int main() {\n%s\n%s\n} \n\n", $12,$13);
+  }
+}
+| KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}' { 
+/* We have a successful parse! 
+  Check for any errors and generate output. 
+*/
+  if(yyerror_count==0) {
+    // include the teaclib.h file
+    puts(c_prologue); 
+    printf("/* program */ \n\n");
+    printf("int main() {\n%s\n} \n\n", $10);
+  }
+}
+| func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}' { 
+/* We have a successful parse! 
+  Check for any errors and generate output. 
+*/
+  if(yyerror_count==0) {
+    // include the teaclib.h file
+    puts(c_prologue); 
+    printf("/* program */ \n\n");
+    printf("%s\n\n", $1);
+    printf("int main() {\n%s\n} \n\n", $11);
+  }
+}
+| global_decl KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}' { 
+/* We have a successful parse! 
+  Check for any errors and generate output. 
+*/
+  if(yyerror_count==0) {
+    // include the teaclib.h file
+    puts(c_prologue); 
+    printf("/* program */ \n\n");
+    printf("%s\n\n", $1);
+    printf("int main() {\n%s\n} \n\n", $11);
+  }
+}
+| global_decl func_decl_list KW_CONST KW_START ASSIGN '(' ')' ':' KW_INT ARROW '{' body '}' { 
+/* We have a successful parse! 
+  Check for any errors and generate output. 
+*/
+  if(yyerror_count==0) {
+    // include the teaclib.h file
+    puts(c_prologue); 
+    printf("/* program */ \n\n");
+    printf("%s\n\n", $1);
+    printf("%s\n\n", $2);
+    printf("int main() {\n%s\n} \n", $12);
   }
 }
 ;
@@ -228,7 +228,7 @@ decl_id: IDENT { $$ = $1; }
 type_spec:  KW_INT { $$ = "int"; }
 | KW_REAL { $$ = "double"; }
 | KW_BOOL { $$ = "int"; }
-| KW_STRING { $$ = "string"; }
+| KW_STRING { $$ = "char"; }
 ;
 
 expr:
@@ -262,14 +262,14 @@ func_decl_list: func_decl_list func_decl { $$ = template("%s\n%s", $1, $2); }
 | func_decl { $$ = template("%s", $1); }
 ;
 
-func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body return '}' ';'
-{ $$ = template("%s %s (%s) {\n%s\n%s\n%s\n}", $8, $2, $5, $11, $12, $13); }
-| KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl return '}' ';'
-{ $$ = template("%s %s (%s) {\n%s\n%s\n}", $8, $2, $5, $11, $12); }
-| KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' return '}' ';'
+func_decl: KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl body '}' ';'
+{ $$ = template("%s %s (%s) {\n%s\n%s\n\n}", $8, $2, $5, $11, $12); }
+| KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' local_decl '}' ';'
+{ $$ = template("%s %s (%s) {\n%s\n\n}", $8, $2, $5, $11); }
+| KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' '}' ';'
+{ $$ = template("%s %s (%s) {\n%s\n}", $8, $2, $5); }
+| KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' body '}' ';' 
 { $$ = template("%s %s (%s) {\n%s\n}", $8, $2, $5, $11); }
-| KW_CONST decl_id ASSIGN '(' par_decl_list ')' ':' type_spec ARROW '{' body return '}' ';' 
-{ $$ = template("%s %s (%s) {\n%s\n%s\n}", $8, $2, $5, $11, $12); }
 ;
 
 par_decl_list: par_decl_list ',' par_decl { $$ = template("%s, %s", $1, $3 );}
@@ -290,6 +290,7 @@ command: decl_id ASSIGN expr ';' { $$ = template("%s = %s;", $1, $3); }
 | func_call ';' { $$ = template("%s;", $1); }
 | if_command  { $$ = template("%s", $1); }
 | while_command { $$ = template("%s", $1); }
+| return { $$ = template("%s", $1); }
 ; 
 
 //LOCAL_VARIABLES_hasConflict
@@ -310,7 +311,6 @@ param : expr { $$ = template("%s", $1); }
 //RETURN
 return: KW_RETURN expr ';' { $$ = template("return %s;", $2); }
 | KW_RETURN ';' { $$ = template("return;"); }
-| %empty { $$="";} 
 
 //IF
 if_command: KW_IF expr KW_THEN body if_rest { $$ = template("if (%s) {\n%s%s", $2, $4, $5); }

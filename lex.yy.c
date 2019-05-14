@@ -1153,7 +1153,7 @@ YY_RULE_SETUP
 case 57:
 YY_RULE_SETUP
 #line 94 "mylexer-tc.l"
-{ BEGIN(comment); printf("comment started at line: %d\n", line_num); }
+{ BEGIN(comment); /*printf("comment started at line: %d\n", line_num); */ }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
@@ -1174,7 +1174,7 @@ YY_RULE_SETUP
 case 61:
 YY_RULE_SETUP
 #line 99 "mylexer-tc.l"
-{ BEGIN(INITIAL); printf("comment ended at line: %d\n", line_num); }
+{ BEGIN(INITIAL); /*printf("comment ended at line: %d\n", line_num);*/ }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(comment):

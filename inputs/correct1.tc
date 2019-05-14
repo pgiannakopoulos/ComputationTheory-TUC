@@ -1,6 +1,7 @@
 --test
 
 const SIZE <- 10 : int;
+let temp : string;
 
 const fibo <- (n: int): int => {
 	let i <- 1, t1 <- 0, t2 <- 1, nextTerm : int;
