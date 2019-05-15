@@ -4,11 +4,13 @@
 /* program */ 
 
 const int SIZE = 10;
-char temp;
+char *temp = "test";
 
 int fibo (int n) {
 int i = 1, t1 = 0, t2 = 1, nextTerm;
 writeString("Fibonacci Series: ");
+writeString("\n");
+writeString(temp);
 while (i <= n) {
 writeInt(t1);
 writeString(", ");
