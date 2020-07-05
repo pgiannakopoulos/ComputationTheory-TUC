@@ -68,11 +68,12 @@
 %precedence KW_ELSE
 %precedence KW_THEN
 
-
-%left KW_AND KW_OR
+%left KW_OR
+%left KW_AND
 %left TK_OP_EQ TK_OP_NOTEQ TK_OP_BIGGER TK_OP_BIGEQ
 %left '+' '-'
 %left '*' '/' '%'
+%precedence POS_SIGN NEG_SIGN
 %right KW_NOT
 
 %%
@@ -237,8 +238,8 @@ expr:
 | STRING
 | decl_id
 | func_call
-| '-' expr  { $$ = template(" -%s", $2); }
-| '+' expr  { $$ = template(" +%s", $2); }
+| '-' expr %prec NEG_SIGN  { $$ = template(" -%s", $2); }
+| '+' expr %prec POS_SIGN { $$ = template(" +%s", $2); }
 | KW_NOT expr { $$ = template("!%s", $2); }
 | expr KW_OR expr { $$ = template("%s || %s", $1, $3); }
 | expr KW_AND expr { $$ = template("%s && %s", $1, $3); }
